@@ -26,6 +26,7 @@ class Robot : public frc::TimedRobot {
   void DisabledPeriodic() override;
   void TestInit() override;
   void TestPeriodic() override;
+  void HandleDrivetrain();
 
   /*=============
   Pins & IDs
@@ -46,20 +47,27 @@ class Robot : public frc::TimedRobot {
   frc::XboxController copilot = frc::XboxController(1);
 
   // Declare doubles to store joystick values
-  // Copilot joystick values
+  // Copilot joystick values, not currently using these values
+  /*
   double copilotLeftStickX;
   double copilotRightStickX;
   double copilotLeftStickY;
   double copilotRightStickY;
+  */
 
   // Pilot joystick values
-  double pilotLeftStickX;
-  double pilotRightStickX;
+  // Not using pilot X values
+  // double pilotLeftStickX;
+  // double pilotRightStickX;
   double pilotLeftStickY;
   double pilotRightStickY;
   
   // Whether inputs to TankDrive() should be squared (increases sensitivity of inputs at low speed)
   bool squareInputs = true;
+
+  // Deadzone values
+  double deadzoneUpperLimit = 0.05;
+  double deadzoneLowerLimit = -0.05; 
 
   // Create motor controller groups
   frc::MotorControllerGroup motorGroupLeft = frc::MotorControllerGroup(motorFL, motorBL);

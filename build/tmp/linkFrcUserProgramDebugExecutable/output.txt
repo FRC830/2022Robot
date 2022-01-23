@@ -1,4 +1,4 @@
-See file:///C:/Users/ammil/Workspace/2022Robot/build/tmp/linkFrcUserProgramDebugExecutable/output.txt for all output for linkFrcUserProgramDebugExecutable.
+See file:///C:/Users/zelin/source/ratpackrobotics/2022Robot/build/tmp/linkFrcUserProgramDebugExecutable/output.txt for all output for linkFrcUserProgramDebugExecutable.
 linking frcUserProgram successful.
 
-Finished linkFrcUserProgramDebugExecutable, see full log file:///C:/Users/ammil/Workspace/2022Robot/build/tmp/linkFrcUserProgramDebugExecutable/output.txt.
+Finished linkFrcUserProgramDebugExecutable, see full log file:///C:/Users/zelin/source/ratpackrobotics/2022Robot/build/tmp/linkFrcUserProgramDebugExecutable/output.txt.

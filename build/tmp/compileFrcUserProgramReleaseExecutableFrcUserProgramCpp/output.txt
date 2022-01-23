@@ -1,4 +1,4 @@
-See file:///C:/Users/ammil/Workspace/2022Robot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramReleaseExecutableFrcUserProgramCpp.
+See file:///C:/Users/zelin/source/ratpackrobotics/2022Robot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramReleaseExecutableFrcUserProgramCpp.
 compiling Robot.cpp successful.
 
-Finished compileFrcUserProgramReleaseExecutableFrcUserProgramCpp, see full log file:///C:/Users/ammil/Workspace/2022Robot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt.
+Finished compileFrcUserProgramReleaseExecutableFrcUserProgramCpp, see full log file:///C:/Users/zelin/source/ratpackrobotics/2022Robot/build/tmp/compileFrcUserProgramReleaseExecutableFrcUserProgramCpp/output.txt.

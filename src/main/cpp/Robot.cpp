@@ -4,7 +4,7 @@
 
 #include "Robot.h"
 
-
+using namespace std;
 
 void Robot::RobotInit() {}
 
@@ -35,21 +35,7 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
-  // Collect input from XBox controllers
-  // collect pilot joystick values using pilot object
-  pilotLeftStickX = pilot.GetLeftX();
-  pilotRightStickX = pilot.GetRightX();
-  pilotLeftStickY = pilot.GetLeftY();
-  pilotRightStickY = pilot.GetRightY();
-
-  // collect copilot joystick values using copilot object
-  copilotLeftStickX = copilot.GetLeftX();
-  copilotRightStickX = copilot.GetRightX();
-  copilotLeftStickY = copilot.GetLeftY();
-  copilotRightStickY = copilot.GetRightY();
-
-  // Set speed of motor controller groups based on joystick values
-  drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
+  HandleDrivetrain();
 }
 
 void Robot::DisabledInit() {}
@@ -60,8 +46,47 @@ void Robot::TestInit() {}
 
 void Robot::TestPeriodic() {}
 
+
+
+void Robot::HandleDrivetrain() {
+  // Collect input from XBox controllers
+  // collect pilot joystick values using pilot object
+  // pilotLeftStickX = pilot.GetLeftX();
+  // pilotRightStickX = pilot.GetRightX();
+  pilotLeftStickY = pilot.GetLeftY();
+  pilotRightStickY = pilot.GetRightY();
+
+  
+  // collect copilot joystick values using copilot object
+  // Currently not using copilot values
+  /*
+  copilotLeftStickX = copilot.GetLeftX();
+  copilotRightStickX = copilot.GetRightX();
+  copilotLeftStickY = copilot.GetLeftY();
+  copilotRightStickY = copilot.GetRightY();
+  */
+
+  // Set speed of motor controller groups based on joystick values
+  if ((pilotLeftStickY < deadzoneUpperLimit && pilotLeftStickY > deadzoneLowerLimit) && 
+      (pilotRightStickY < deadzoneUpperLimit && pilotRightStickY > deadzoneLowerLimit)) {
+    drivetrain.TankDrive(0, 0, squareInputs);  
+  } 
+  else if (pilotLeftStickY < deadzoneUpperLimit && pilotLeftStickY > deadzoneLowerLimit) 
+  { 
+    drivetrain.TankDrive(0, pilotRightStickY, squareInputs);
+  } 
+  else if (pilotRightStickY < deadzoneUpperLimit && pilotRightStickY > deadzoneLowerLimit)
+  {
+    drivetrain.TankDrive(pilotLeftStickY, 0, squareInputs);
+  }
+  else {
+    drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
+  }
+ 
+}
+
 #ifndef RUNNING_FRC_TESTS
 int main() {
   return frc::StartRobot<Robot>();
 }
-#endif
+#endif  
