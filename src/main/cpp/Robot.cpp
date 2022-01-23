@@ -35,29 +35,7 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
-<<<<<<< HEAD
   HandleDrivetrain();
-=======
-  // Collect input from XBox controllers
-  // collect pilot joystick values using pilot object
-  pilotLeftStickX = pilot.GetLeftX();
-  pilotRightStickX = pilot.GetRightX();
-  pilotLeftStickY = pilot.GetLeftY();
-  pilotRightStickY = pilot.GetRightY();
-
-  // collect copilot joystick values using copilot object
-  copilotLeftStickX = copilot.GetLeftX();
-  copilotRightStickX = copilot.GetRightX();
-  copilotLeftStickY = copilot.GetLeftY();
-  copilotRightStickY = copilot.GetRightY();
-
-  if (pilot.GetAButton() || copilot.GetAButton()) {
-    printf("LoL you press A");
-  }
-
-  // Set speed of motor controller groups based on joystick values
-  drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
->>>>>>> be2f5801bd2854b4fc600ebdee0d366e22b78597
 }
 
 void Robot::DisabledInit() {}
@@ -104,7 +82,6 @@ void Robot::HandleDrivetrain() {
   else {
     drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
   }
- 
 }
 
 #ifndef RUNNING_FRC_TESTS
