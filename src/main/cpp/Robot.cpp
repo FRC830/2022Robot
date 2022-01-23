@@ -4,13 +4,9 @@
 
 #include "Robot.h"
 
-#include <fmt/core.h>
 
-#include <frc/smartdashboard/SmartDashboard.h>
 
-void Robot::RobotInit() {
-
-}
+void Robot::RobotInit() {}
 
 /*
  * This function is called every robot packet, no matter the mode. Use
@@ -20,6 +16,7 @@ void Robot::RobotInit() {
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
+
 void Robot::RobotPeriodic() {}
 
 
@@ -31,9 +28,29 @@ void Robot::AutonomousPeriodic() {
 
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
 
-void Robot::TeleopPeriodic() {}
+  
+  
+}
+
+void Robot::TeleopPeriodic() {
+  // Collect input from XBox controllers
+  // collect pilot joystick values using pilot object
+  pilotLeftStickX = pilot.GetLeftX();
+  pilotRightStickX = pilot.GetRightX();
+  pilotLeftStickY = pilot.GetLeftY();
+  pilotRightStickY = pilot.GetRightY();
+
+  // collect copilot joystick values using copilot object
+  copilotLeftStickX = copilot.GetLeftX();
+  copilotRightStickX = copilot.GetRightX();
+  copilotLeftStickY = copilot.GetLeftY();
+  copilotRightStickY = copilot.GetRightY();
+
+  // Set speed of motor controller groups based on joystick values
+  drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
+}
 
 void Robot::DisabledInit() {}
 
