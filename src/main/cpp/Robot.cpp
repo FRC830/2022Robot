@@ -48,6 +48,10 @@ void Robot::TeleopPeriodic() {
   copilotLeftStickY = copilot.GetLeftY();
   copilotRightStickY = copilot.GetRightY();
 
+  if (pilot.GetAButton() || copilot.GetAButton()) {
+    printf("LoL you press A");
+  }
+
   // Set speed of motor controller groups based on joystick values
   drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
 }
