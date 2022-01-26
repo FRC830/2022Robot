@@ -13,6 +13,7 @@
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/SpeedController.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
+#include <cmath> 
 
 class Robot : public frc::TimedRobot {
  public:

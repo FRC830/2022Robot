@@ -82,6 +82,20 @@ void Robot::HandleDrivetrain() {
   else {
     drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
   }
+
+  void Robot::Deadzone(pilotStickY){
+    //deadzoneLimit is arbitrary
+    deadzoneLimit = 0.05;
+    bool stickInDeadzone = abs(deadzoneLimit) > pilotStickY ;
+    if (stickInDeadzone==True){
+      pilotStickY = 0;
+    }
+    return pilotStickY;
+  }
+
+  Robot::Deadzone(pilotLeftStickY);
+  Robot::Deadzone(pilotRightStickY);
+  drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
 }
 
 #ifndef RUNNING_FRC_TESTS
