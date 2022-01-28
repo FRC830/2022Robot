@@ -41,7 +41,7 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax motorFL = rev::CANSparkMax(1, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
   rev::CANSparkMax motorFR = rev::CANSparkMax(2, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
   rev::CANSparkMax motorBL = rev::CANSparkMax(3, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
-  rev::CANSparkMax motorBR = rev::CANSparkMax(4, rev::CANSparkMaxLowLevel::MotorType::kBrushless); \
+  rev::CANSparkMax motorBR = rev::CANSparkMax(4, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
 
   // Xbox controller object contruct, does not contain correct port, pilot goes in 0 copilot goes in 1
   frc::XboxController pilot = frc::XboxController(0);
@@ -64,11 +64,12 @@ class Robot : public frc::TimedRobot {
   double pilotRightStickY;
   
   // Whether inputs to TankDrive() should be squared (increases sensitivity of inputs at low speed)
-  bool squareInputs = true;
+
+  //MADE IT INIT
+  bool squareInputs;
 
   // Deadzone values
-  double deadzoneUpperLimit = 0.05;
-  double deadzoneLowerLimit = -0.05; 
+  double deadzoneLimit = 0.05;
 
   // Create motor controller groups
   frc::MotorControllerGroup motorGroupLeft = frc::MotorControllerGroup(motorFL, motorBL);

@@ -64,38 +64,22 @@ void Robot::HandleDrivetrain() {
   copilotRightStickX = copilot.GetRightX();
   copilotLeftStickY = copilot.GetLeftY();
   copilotRightStickY = copilot.GetRightY();
-  */
+  */  
 
-  // Set speed of motor controller groups based on joystick values
-  if ((pilotLeftStickY < deadzoneUpperLimit && pilotLeftStickY > deadzoneLowerLimit) && 
-      (pilotRightStickY < deadzoneUpperLimit && pilotRightStickY > deadzoneLowerLimit)) {
-    drivetrain.TankDrive(0, 0, squareInputs);  
-  } 
-  else if (pilotLeftStickY < deadzoneUpperLimit && pilotLeftStickY > deadzoneLowerLimit) 
-  { 
-    drivetrain.TankDrive(0, pilotRightStickY, squareInputs);
-  } 
-  else if (pilotRightStickY < deadzoneUpperLimit && pilotRightStickY > deadzoneLowerLimit)
-  {
-    drivetrain.TankDrive(pilotLeftStickY, 0, squareInputs);
-  }
-  else {
-    drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
-  }
+  // TODO: make a something that determines when to set squareInputs to true, instead of always true
 
-  void Robot::Deadzone(pilotStickY){
+  squareInputs = true;
+  pilotLeftStickY = Robot::Deadzone(pilotLeftStickY);
+  pilotRightStickY = Robot::Deadzone(pilotRightStickY);
+  drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
+}
+
+void Robot::Deadzone(pilotStickY){
     //deadzoneLimit is arbitrary
-    deadzoneLimit = 0.05;
-    bool stickInDeadzone = abs(deadzoneLimit) > pilotStickY ;
-    if (stickInDeadzone==True){
+    if (abs(pilotStickY) > deadzoneLimit){
       pilotStickY = 0;
     }
     return pilotStickY;
-  }
-
-  Robot::Deadzone(pilotLeftStickY);
-  Robot::Deadzone(pilotRightStickY);
-  drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
 }
 
 #ifndef RUNNING_FRC_TESTS
