@@ -69,10 +69,11 @@ class Robot : public frc::TimedRobot {
   // Whether inputs to TankDrive() should be squared (increases sensitivity of inputs at low speed)
 
   //MADE IT INIT
-  bool squareInputs;
+  bool inputSentivityReduction;
 
   // Deadzone values
   double deadzoneLimit = 0.05;
+  double inputSensitivity = 0.4;
 
   // Create motor controller groups
   frc::MotorControllerGroup motorGroupLeft = frc::MotorControllerGroup(motorFL, motorBL);

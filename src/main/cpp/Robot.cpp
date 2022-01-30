@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "Robot.h"
+#include <iostream>
+
 
 using namespace std;
 
@@ -53,8 +55,8 @@ void Robot::HandleDrivetrain() {
   // collect pilot joystick values using pilot object
   // pilotLeftStickX = pilot.GetLeftX();
   // pilotRightStickX = pilot.GetRightX();
-  pilotLeftStickY = pilot.GetLeftY();
-  pilotRightStickY = pilot.GetRightY();
+  pilotLeftStickY = pilot.GetLeftY() * inputSensitivity;
+  pilotRightStickY = pilot.GetRightY() * inputSensitivity;
 
   
   // collect copilot joystick values using copilot object
@@ -68,20 +70,20 @@ void Robot::HandleDrivetrain() {
 
   // TODO: make a something that determines when to set squareInputs to true, instead of always true
 
-  squareInputs = true;
+  inputSentivityReduction = true;
   pilotLeftStickY = Robot::Deadzone(pilotLeftStickY);
-  pilotRightStickY = Robot::Deadzone(pilotRightStickY);
-  drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
+  pilotRightStickY = Robot::Deadzone(pilotRightStickY) * -1;
+  drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, inputSentivityReduction);
 }
 
-double Robot::Deadzone(double pilotStickY){
+double Robot::Deadzone(double stick){
     //deadzoneLimit is arbitrary
-    if (abs(pilotStickY) > deadZoneLimit) 
+    if (abs(stick) < 0.1) 
     {
-      pilotStickY = 0;
+      stick = 0;
     }
     
-    return pilotStickY;
+    return stick;
 }
 
 #ifndef RUNNING_FRC_TESTS
