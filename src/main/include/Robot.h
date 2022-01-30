@@ -15,6 +15,8 @@
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <cmath> 
 
+const double deadZoneLimit = 0.05; 
+
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
@@ -28,6 +30,7 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
   void HandleDrivetrain();
+  double Deadzone(double pilotStickY);
 
   /*=============
   Pins & IDs

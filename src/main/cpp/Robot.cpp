@@ -74,11 +74,13 @@ void Robot::HandleDrivetrain() {
   drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, squareInputs);
 }
 
-void Robot::Deadzone(pilotStickY){
+double Robot::Deadzone(double pilotStickY){
     //deadzoneLimit is arbitrary
-    if (abs(pilotStickY) > deadzoneLimit){
+    if (abs(pilotStickY) > deadZoneLimit) 
+    {
       pilotStickY = 0;
     }
+    
     return pilotStickY;
 }
 
