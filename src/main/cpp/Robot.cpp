@@ -73,7 +73,7 @@ void Robot::HandleDrivetrain() {
   inputSentivityReduction = true;
   pilotLeftStickY = Robot::Deadzone(pilotLeftStickY);
   pilotRightStickY = Robot::Deadzone(pilotRightStickY) * -1;
-  drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, inputSentivityReduction);
+  drivetrain.ArcadeDrive(pilotLeftStickY, pilotRightStickY, inputSentivityReduction);
 }
 
 double Robot::Deadzone(double stick){

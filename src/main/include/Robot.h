@@ -42,8 +42,8 @@ class Robot : public frc::TimedRobot {
   // The line below is just an example, it does not contain the correct deviceID, may not contain
   // correct MotorType: Brushless
   rev::CANSparkMax motorFL = rev::CANSparkMax(1, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
-  rev::CANSparkMax motorFR = rev::CANSparkMax(2, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
-  rev::CANSparkMax motorBL = rev::CANSparkMax(3, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
+  rev::CANSparkMax motorFR = rev::CANSparkMax(3, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
+  rev::CANSparkMax motorBL = rev::CANSparkMax(2, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
   rev::CANSparkMax motorBR = rev::CANSparkMax(4, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
 
   // Xbox controller object contruct, does not contain correct port, pilot goes in 0 copilot goes in 1
@@ -56,6 +56,7 @@ class Robot : public frc::TimedRobot {
   double copilotLeftStickX;
   double copilotRightStickX;
   double copilotLeftStickY;
+
   double copilotRightStickY;
   */
 
@@ -73,7 +74,7 @@ class Robot : public frc::TimedRobot {
 
   // Deadzone values
   double deadzoneLimit = 0.05;
-  double inputSensitivity = 0.4;
+  double inputSensitivity = 0.6;
 
   // Create motor controller groups
   frc::MotorControllerGroup motorGroupLeft = frc::MotorControllerGroup(motorFL, motorBL);
