@@ -8,7 +8,11 @@
 
 using namespace std;
 
-void Robot::RobotInit() {}
+void Robot::RobotInit() {
+  frc::SmartDashboard::PutBoolean("ARCADE DRIVE", true);
+  tankAssist = frc::SmartDashboard::GetNumber("Tank Assist", 0.08);
+  defaultinputSensitivity = frc::SmartDashboard::PutNumber("input sensitivity", 0.4);
+}
 
 /*
  * This function is called every robot packet, no matter the mode. Use
@@ -31,7 +35,7 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-
+  
   
   
 }
@@ -51,12 +55,38 @@ void Robot::TestPeriodic() {}
 
 
 void Robot::HandleDrivetrain() {
+  //collect values from shuffleboard
+  arcadeDrive = frc::SmartDashboard::GetBoolean("ARCADE DRIVE", true);
+  tankAssist = frc::SmartDashboard::GetNumber("Tank Assist", 0.08);
+  defaultinputSensitivity = frc::SmartDashboard::GetNumber("input sensitivity", 0.4);
+  turningSensitivity = frc::SmartDashboard::GetNumber("TurningSensitivity", 0.6);
+
   // Collect input from XBox controllers
   // collect pilot joystick values using pilot object
   // pilotLeftStickX = pilot.GetLeftX();
   // pilotRightStickX = pilot.GetRightX();
-  pilotLeftStickY = pilot.GetLeftY() * inputSensitivity;
-  pilotRightStickY = pilot.GetRightY() * inputSensitivity;
+  bool drift = false;//(pilot.GetRightStickButtonPressed() || (!pilot.GetRightStickButtonReleased()));
+  
+  if (drift)
+  {
+    std::cout << "drift!!" << std::endl;
+    pilotLeftStickY = pilot.GetLeftY() * driftInputSensitivity;
+    pilotRightStickY = pilot.GetRightY() * driftInputSensitivity;
+    pilotLeftStickX = pilot.GetLeftX() * driftInputSensitivity;
+    pilotRightStickX = pilot.GetRightX() * driftInputSensitivity;
+  } 
+  else
+  {
+    pilotLeftStickY = pilot.GetLeftY() * defaultinputSensitivity;
+    pilotRightStickY = pilot.GetRightY() * defaultinputSensitivity;
+    pilotLeftStickX = pilot.GetLeftX() * defaultinputSensitivity;
+    pilotRightStickX = pilot.GetRightX() * defaultinputSensitivity;
+  } 
+
+  //determine if the right stick has been pressed or not released 
+
+
+
 
   
   // collect copilot joystick values using copilot object
@@ -70,20 +100,46 @@ void Robot::HandleDrivetrain() {
 
   // TODO: make a something that determines when to set squareInputs to true, instead of always true
 
-  inputSentivityReduction = true;
-  pilotLeftStickY = Robot::Deadzone(pilotLeftStickY);
-  pilotRightStickY = Robot::Deadzone(pilotRightStickY) * -1;
-  drivetrain.ArcadeDrive(pilotLeftStickY, pilotRightStickY, inputSentivityReduction);
+  //uncomment to disable square inputs
+  //inputSentivityReduction = false;
+  if (arcadeDrive)
+  {
+    std::cout << "arcadeDrive" << std::endl;
+    pilotLeftStickX = Robot::Deadzone(pilotLeftStickX) * -1 * turningSensitivity;
+    pilotRightStickY = Robot::Deadzone(pilotRightStickY) * -1;
+    drivetrain.ArcadeDrive(pilotLeftStickX, pilotRightStickY, inputSentivityReduction);
+  }
+  else
+  {
+    //tank drive
+    std::cout << "tankDrive" << std::endl;
+    // if the values are close, average them
+    if (abs(pilotLeftStickX - pilotRightStickY) < 0.08)
+    {
+      
+      pilotLeftStickY = Robot::Deadzone(pilotLeftStickY);
+      pilotRightStickY = Robot::Deadzone(pilotRightStickY);
+      pilotLeftStickY = (pilotLeftStickY + pilotLeftStickY) / 2;
+      pilotRightStickY = pilotLeftStickY * -1;
+    }
+    else
+    {
+      pilotLeftStickY = Robot::Deadzone(pilotLeftStickY);
+      pilotRightStickY = Robot::Deadzone(pilotRightStickY) * -1;
+    }
+    drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, inputSentivityReduction);
+  }
+
 }
 
-double Robot::Deadzone(double stick){
+double Robot::Deadzone(double amm){
     //deadzoneLimit is arbitrary
-    if (abs(stick) < 0.1) 
+    if (abs(amm) < 0.1) 
     {
-      stick = 0;
+      amm = 0;
     }
     
-    return stick;
+    return amm;
 }
 
 #ifndef RUNNING_FRC_TESTS

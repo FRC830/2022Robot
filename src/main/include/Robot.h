@@ -8,12 +8,17 @@
 #include <fmt/core.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/TimedRobot.h>
-#include <frc/smartdashboard/SendableChooser.h>
 #include <frc/XboxController.h>
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/SpeedController.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <cmath> 
+
+#include <frc/shuffleboard/Shuffleboard.h>
+#include <frc/shuffleboard/ShuffleboardTab.h>
+#include <frc/smartdashboard/SendableChooser.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+
 
 const double deadZoneLimit = 0.05; 
 
@@ -66,15 +71,25 @@ class Robot : public frc::TimedRobot {
   // double pilotRightStickX;
   double pilotLeftStickY;
   double pilotRightStickY;
+  double pilotLeftStickX;
+  double pilotRightStickX;
   
   // Whether inputs to TankDrive() should be squared (increases sensitivity of inputs at low speed)
 
   //MADE IT INIT
   bool inputSentivityReduction;
 
+  bool arcadeDrive = true;
+  double tankAssist = 0.08;
+
   // Deadzone values
   double deadzoneLimit = 0.05;
-  double inputSensitivity = 0.6;
+
+  const double driftInputSensitivity = 1.0;
+  double defaultinputSensitivity = 0.4;
+
+  double turningSensitivity = 0.6;
+
 
   // Create motor controller groups
   frc::MotorControllerGroup motorGroupLeft = frc::MotorControllerGroup(motorFL, motorBL);
