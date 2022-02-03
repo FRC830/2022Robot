@@ -40,7 +40,6 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
   GetTeleopShuffleBoardValues();
-  GetControllerInput();
   HandleDrivetrain();
 }
 
@@ -56,11 +55,11 @@ void Robot::TestPeriodic() {}
 void Robot::HandleDrivetrain() {
   bool drift;
 
-  if (pilotRightStickButtonPressed)
+  if (pilot.GetRightStickButtonPressed())
   {
     drift = true;
   }
-  else if (pilotRightStickButtonReleased)
+  else if (pilot.GetRightStickButtonReleased())
   {
     drift = false;
   }
@@ -73,17 +72,17 @@ void Robot::HandleDrivetrain() {
   if (drift)
   {
     std::cout << "drift!!" << std::endl;
-    adjustedPilotLeftStickY = pilotLeftStickX * driftInputSensitivity;
-    adjustedPilotRightStickY = pilotRightStickY * driftInputSensitivity;
-    adjustedPilotLeftStickX = pilotLeftStickY * driftInputSensitivity;
-    adjustedPilotRightStickX = pilotRightStickX * driftInputSensitivity;
+    adjustedPilotLeftStickY = pilot.GetLeftX() * driftInputSensitivity;
+    adjustedPilotRightStickY = pilot.GetRightY() * driftInputSensitivity;
+    adjustedPilotLeftStickX = pilot.GetLeftY() * driftInputSensitivity;
+    adjustedPilotRightStickX = pilot.GetRightX() * driftInputSensitivity;
   } 
   else
   {
-    adjustedPilotLeftStickY = pilotLeftStickX * defaultinputSensitivity;
-    adjustedPilotRightStickY = pilotRightStickY * defaultinputSensitivity;
-    adjustedPilotLeftStickX = pilotLeftStickY * defaultinputSensitivity;
-    adjustedPilotRightStickX = pilotRightStickX * defaultinputSensitivity;
+    adjustedPilotLeftStickY = pilot.GetLeftX() * defaultinputSensitivity;
+    adjustedPilotRightStickY = pilot.GetRightY() * defaultinputSensitivity;
+    adjustedPilotLeftStickX = pilot.GetLeftY() * defaultinputSensitivity;
+    adjustedPilotRightStickX = pilot.GetRightX() * defaultinputSensitivity;
   } 
 
   //inputSentivityReduction = false;
@@ -156,87 +155,7 @@ void Robot::GetTeleopShuffleBoardValues()
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 }
 
-void Robot::GetControllerInput()
-{
 
-  //no, massive waste, evn factoring out all this, you save 4 charectors of typing at most and it reduces readability with dumb global varables.
-  //they are not even global
-  //so they acheive nothing
-  //they are class variables, accessable from within the class
-  pilotLeftStickY = Robot::Deadzone(pilot.GetLeftY());
-  pilotRightStickY = Robot::Deadzone(pilot.GetRightY());
-  pilotLeftStickX = Robot::Deadzone(pilot.GetLeftX());
-  pilotRightStickX = Robot::Deadzone(pilot.GetRightX());
-  pilotLeftTriggerAxis = Robot::Deadzone(pilot.GetLeftTriggerAxis()); 
-  pilotRightTriggerAxis = Robot::Deadzone(pilot.GetRightTriggerAxis());
-  pilotLeftBumper = pilot.GetLeftBumper();
-  pilotRightBumper = pilot.GetRightBumper();
-  pilotLeftBumperPressed = pilot.GetLeftBumperPressed();
-  pilotRightBumperPressed = pilot.GetRightBumperPressed();
-  pilotLeftBumperReleased = pilot.GetLeftBumperReleased();
-  pilotRightBumperReleased = pilot.GetRightBumperReleased();
-  pilotLeftStickButton = pilot.GetLeftStickButton();
-  pilotRightStickButton = pilot.GetRightStickButton();
-  pilotLeftStickButtonPressed = pilot.GetLeftStickButtonPressed();
-  pilotRightStickButtonPressed = pilot.GetRightStickButtonPressed();
-  pilotLeftStickButtonReleased = pilot.GetLeftStickButtonReleased();
-  pilotRightStickButtonReleased = pilot.GetRightStickButtonReleased();
-  pilotAButton = pilot.GetAButton();
-  pilotAButtonPressed = pilot.GetAButtonPressed();
-  pilotAButtonReleased = pilot.GetAButtonReleased();
-  pilotBButton = pilot.GetBButton();
-  pilotBButtonPressed = pilot.GetBButtonPressed();
-  pilotBButtonReleased = pilot.GetBButtonReleased();
-  pilotXButton = pilot.GetXButton();
-  pilotXButtonPressed = pilot.GetXButtonPressed();
-  pilotXButtonReleased = pilot.GetXButtonReleased();
-  pilotYButton = pilot.GetYButton();
-  pilotYButtonPressed = pilot.GetYButtonPressed();
-  pilotYButtonReleased = pilot.GetYButtonReleased();
-  pilotBackButton = pilot.GetBackButton();
-  pilotBackButtonPressed = pilot.GetBackButtonPressed();
-  pilotBackButtonReleased = pilot.GetBackButtonReleased();
-  pilotStartButton = pilot.GetStartButton();
-  pilotStartButtonPressed = pilot.GetStartButtonPressed();
-  pilotStartButtonReleased = pilot.GetStartButtonReleased();
-
-  copilotLeftStickY = Robot::Deadzone(copilot.GetLeftY());
-  copilotRightStickY = Robot::Deadzone(copilot.GetRightY());
-  copilotLeftStickX = Robot::Deadzone(copilot.GetLeftX());
-  copilotRightStickX = Robot::Deadzone(copilot.GetRightX());
-  copilotLeftTriggerAxis = Robot::Deadzone(copilot.GetLeftTriggerAxis()); 
-  copilotRightTriggerAxis = Robot::Deadzone(copilot.GetRightTriggerAxis()); 
-  copilotLeftBumper = copilot.GetLeftBumper();
-  copilotRightBumper = copilot.GetRightBumper();
-  copilotLeftBumperPressed = copilot.GetLeftBumperPressed();
-  copilotRightBumperPressed = copilot.GetRightBumperPressed();
-  copilotLeftBumperReleased = copilot.GetLeftBumperReleased();
-  copilotRightBumperReleased = copilot.GetRightBumperReleased();
-  copilotLeftStickButton = copilot.GetLeftStickButton();
-  copilotRightStickButton = copilot.GetRightStickButton();
-  copilotLeftStickButtonPressed = copilot.GetLeftStickButtonPressed();
-  copilotRightStickButtonPressed = copilot.GetRightStickButtonPressed();
-  copilotLeftStickButtonReleased = copilot.GetLeftStickButtonReleased();
-  copilotRightStickButtonReleased = copilot.GetRightStickButtonReleased();
-  copilotAButton = copilot.GetAButton();
-  copilotAButtonPressed = copilot.GetAButtonPressed();
-  copilotAButtonReleased = copilot.GetAButtonReleased();
-  copilotBButton = copilot.GetBButton();
-  copilotBButtonPressed = copilot.GetBButtonPressed();
-  copilotBButtonReleased = copilot.GetBButtonReleased();
-  copilotXButton = copilot.GetXButton();
-  copilotXButtonPressed = copilot.GetXButtonPressed();
-  copilotXButtonReleased = copilot.GetXButtonReleased();
-  copilotYButton = copilot.GetYButton();
-  copilotYButtonPressed = copilot.GetYButtonPressed();
-  copilotYButtonReleased = copilot.GetYButtonReleased();
-  copilotBackButton = copilot.GetBackButton();
-  copilotBackButtonPressed = copilot.GetBackButtonPressed();
-  copilotBackButtonReleased = copilot.GetBackButtonReleased();
-  copilotStartButton = copilot.GetStartButton();
-  copilotStartButtonPressed = copilot.GetStartButtonPressed();
-  copilotStartButtonReleased = copilot.GetStartButtonReleased();
-}
 
 #ifndef RUNNING_FRC_TESTS
 int main() {

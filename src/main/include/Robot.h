@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #pragma once
+
+#include <ModifiableController.h>
 #include <rev/CANSparkMax.h>
 #include <string>
 #include <fmt/core.h>
@@ -57,84 +59,12 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax motorBR = rev::CANSparkMax(4, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
 
   // Xbox controller object contruct, does not contain correct port, pilot goes in 0 copilot goes in 1
-  frc::XboxController pilot = frc::XboxController(0);
-  frc::XboxController copilot = frc::XboxController(1);
+  ModifiableController pilot = ModifiableController(0);
+  ModifiableController copilot = ModifiableController(1);
 
   // Declare doubles to store joystick values
   // Copilot joystick values, not currently using these values
-  double pilotLeftStickY;
-  double pilotRightStickY;
-  double pilotLeftStickX;
-  double pilotRightStickX;
-  double pilotLeftTriggerAxis; 
-  double pilotRightTriggerAxis; 
-  bool pilotLeftBumper;
-  bool pilotRightBumper;
-  bool pilotLeftBumperPressed;
-  bool pilotRightBumperPressed;
-  bool pilotLeftBumperReleased;
-  bool pilotRightBumperReleased;
-  bool pilotLeftStickButton;
-  bool pilotRightStickButton;
-  bool pilotLeftStickButtonPressed;
-  bool pilotRightStickButtonPressed;
-  bool pilotLeftStickButtonReleased;
-  bool pilotRightStickButtonReleased;
-  bool pilotAButton;
-  bool pilotAButtonPressed;
-  bool pilotAButtonReleased;
-  bool pilotBButton;
-  bool pilotBButtonPressed;
-  bool pilotBButtonReleased;
-  bool pilotXButton;
-  bool pilotXButtonPressed;
-  bool pilotXButtonReleased;
-  bool pilotYButton;
-  bool pilotYButtonPressed;
-  bool pilotYButtonReleased;
-  bool pilotBackButton;
-  bool pilotBackButtonPressed;
-  bool pilotBackButtonReleased;
-  bool pilotStartButton;
-  bool pilotStartButtonPressed;
-  bool pilotStartButtonReleased;
-
-  double copilotLeftStickY;
-  double copilotRightStickY;
-  double copilotLeftStickX;
-  double copilotRightStickX;
-  double copilotLeftTriggerAxis; 
-  double copilotRightTriggerAxis;
-  bool copilotLeftBumper;
-  bool copilotRightBumper;
-  bool copilotLeftBumperPressed;
-  bool copilotRightBumperPressed;
-  bool copilotLeftBumperReleased;
-  bool copilotRightBumperReleased;
-  bool copilotLeftStickButton;
-  bool copilotRightStickButton;
-  bool copilotLeftStickButtonPressed;
-  bool copilotRightStickButtonPressed;
-  bool copilotLeftStickButtonReleased;
-  bool copilotRightStickButtonReleased;
-  bool copilotAButton;
-  bool copilotAButtonPressed;
-  bool copilotAButtonReleased;
-  bool copilotBButton;
-  bool copilotBButtonPressed;
-  bool copilotBButtonReleased;
-  bool copilotXButton;
-  bool copilotXButtonPressed;
-  bool copilotXButtonReleased;
-  bool copilotYButton;
-  bool copilotYButtonPressed;
-  bool copilotYButtonReleased;
-  bool copilotBackButton;
-  bool copilotBackButtonPressed;
-  bool copilotBackButtonReleased;
-  bool copilotStartButton;
-  bool copilotStartButtonPressed;
-  bool copilotStartButtonReleased;
+ 
   
   // Whether inputs to TankDrive() should be squared (increases sensitivity of inputs at low speed)
 
