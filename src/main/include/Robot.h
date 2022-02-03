@@ -35,7 +35,12 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
   void HandleDrivetrain();
+  void PlaceShuffleboardTiles();
+  void GetTeleopShuffleBoardValues();
+  void GetControllerInput();
   double Deadzone(double pilotStickY);
+  double Avg(double val1, double val2);
+
 
   /*=============
   Pins & IDs
@@ -57,22 +62,79 @@ class Robot : public frc::TimedRobot {
 
   // Declare doubles to store joystick values
   // Copilot joystick values, not currently using these values
-  /*
-  double copilotLeftStickX;
-  double copilotRightStickX;
-  double copilotLeftStickY;
-
-  double copilotRightStickY;
-  */
-
-  // Pilot joystick values
-  // Not using pilot X values
-  // double pilotLeftStickX;
-  // double pilotRightStickX;
   double pilotLeftStickY;
   double pilotRightStickY;
   double pilotLeftStickX;
   double pilotRightStickX;
+  double pilotLeftTriggerAxis; 
+  double pilotRightTriggerAxis; 
+  bool pilotLeftBumper;
+  bool pilotRightBumper;
+  bool pilotLeftBumperPressed;
+  bool pilotRightBumperPressed;
+  bool pilotLeftBumperReleased;
+  bool pilotRightBumperReleased;
+  bool pilotLeftStickButton;
+  bool pilotRightStickButton;
+  bool pilotLeftStickButtonPressed;
+  bool pilotRightStickButtonPressed;
+  bool pilotLeftStickButtonReleased;
+  bool pilotRightStickButtonReleased;
+  bool pilotAButton;
+  bool pilotAButtonPressed;
+  bool pilotAButtonReleased;
+  bool pilotBButton;
+  bool pilotBButtonPressed;
+  bool pilotBButtonReleased;
+  bool pilotXButton;
+  bool pilotXButtonPressed;
+  bool pilotXButtonReleased;
+  bool pilotYButton;
+  bool pilotYButtonPressed;
+  bool pilotYButtonReleased;
+  bool pilotBackButton;
+  bool pilotBackButtonPressed;
+  bool pilotBackButtonReleased;
+  bool pilotStartButton;
+  bool pilotStartButtonPressed;
+  bool pilotStartButtonReleased;
+
+  double copilotLeftStickY;
+  double copilotRightStickY;
+  double copilotLeftStickX;
+  double copilotRightStickX;
+  double copilotLeftTriggerAxis; 
+  double copilotRightTriggerAxis;
+  bool copilotLeftBumper;
+  bool copilotRightBumper;
+  bool copilotLeftBumperPressed;
+  bool copilotRightBumperPressed;
+  bool copilotLeftBumperReleased;
+  bool copilotRightBumperReleased;
+  bool copilotLeftStickButton;
+  bool copilotRightStickButton;
+  bool copilotLeftStickButtonPressed;
+  bool copilotRightStickButtonPressed;
+  bool copilotLeftStickButtonReleased;
+  bool copilotRightStickButtonReleased;
+  bool copilotAButton;
+  bool copilotAButtonPressed;
+  bool copilotAButtonReleased;
+  bool copilotBButton;
+  bool copilotBButtonPressed;
+  bool copilotBButtonReleased;
+  bool copilotXButton;
+  bool copilotXButtonPressed;
+  bool copilotXButtonReleased;
+  bool copilotYButton;
+  bool copilotYButtonPressed;
+  bool copilotYButtonReleased;
+  bool copilotBackButton;
+  bool copilotBackButtonPressed;
+  bool copilotBackButtonReleased;
+  bool copilotStartButton;
+  bool copilotStartButtonPressed;
+  bool copilotStartButtonReleased;
   
   // Whether inputs to TankDrive() should be squared (increases sensitivity of inputs at low speed)
 
@@ -89,6 +151,7 @@ class Robot : public frc::TimedRobot {
   double defaultinputSensitivity = 0.4;
 
   double turningSensitivity = 0.6;
+
 
 
   // Create motor controller groups
