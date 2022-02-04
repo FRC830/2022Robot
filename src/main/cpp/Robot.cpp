@@ -35,6 +35,12 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {
   
   GetTeleopShuffleBoardValues();
+  pilot.setDeadzone();
+  copilot.setDeadzone();
+  pilot.setDeadzoneLimit(0.1);
+  copilot.setDeadzoneLimit(0.1);
+  pilot.setSensitivity();
+  pilot.setSensitivityLevel(defaultInputSensitivity);
   
 }
 
@@ -53,69 +59,47 @@ void Robot::TestPeriodic() {}
 
 
 void Robot::HandleDrivetrain() {
-  bool drift;
+  
 
   if (pilot.GetRightStickButtonPressed())
   {
-    drift = true;
+    pilot.setSensitivityLevel(driftInputSensitivity);
+
   }
   else if (pilot.GetRightStickButtonReleased())
   {
-    drift = false;
+    pilot.setSensitivityLevel(defaultInputSensitivity);
   }
 
-  double adjustedPilotLeftStickY;
-  double adjustedPilotRightStickY;
-  double adjustedPilotLeftStickX;
-  double adjustedPilotRightStickX;
   
-  if (drift)
-  {
-    std::cout << "drift!!" << std::endl;
-    adjustedPilotLeftStickY = pilot.GetLeftX() * driftInputSensitivity;
-    adjustedPilotRightStickY = pilot.GetRightY() * driftInputSensitivity;
-    adjustedPilotLeftStickX = pilot.GetLeftY() * driftInputSensitivity;
-    adjustedPilotRightStickX = pilot.GetRightX() * driftInputSensitivity;
-  } 
-  else
-  {
-    adjustedPilotLeftStickY = pilot.GetLeftX() * defaultinputSensitivity;
-    adjustedPilotRightStickY = pilot.GetRightY() * defaultinputSensitivity;
-    adjustedPilotLeftStickX = pilot.GetLeftY() * defaultinputSensitivity;
-    adjustedPilotRightStickX = pilot.GetRightX() * defaultinputSensitivity;
-  } 
+ 
 
   //inputSentivityReduction = false;
   if (arcadeDrive)
   {
     std::cout << "arcadeDrive" << std::endl;
-    adjustedPilotLeftStickX = adjustedPilotLeftStickX * -1 * turningSensitivity;
-    adjustedPilotRightStickY = adjustedPilotRightStickY * -1;
-    drivetrain.ArcadeDrive(adjustedPilotLeftStickX, adjustedPilotRightStickY, inputSentivityReduction);
+    double turningSpeed = pilot.GetLeftX() * -1 * turningSensitivity;
+    double forwardSpeed = pilot.GetRightY() * -1;
+    drivetrain.ArcadeDrive(turningSpeed, forwardSpeed, inputSentivityReduction);
   }
   else
   {
     //tank drive
     std::cout << "tankDrive" << std::endl;
     // if the values are close, average them
-    if (abs(adjustedPilotLeftStickX - adjustedPilotRightStickY) < tankAssist)
+    if (abs(pilot.GetLeftY() - pilot.GetRightY()) < tankAssist)
     {
       
-      adjustedPilotLeftStickY = adjustedPilotLeftStickY;
-      adjustedPilotRightStickY = adjustedPilotRightStickY;
-      
       //if we are using tank drive and the sticks are pretty close together, pretend that they are all the way togetehr
-      adjustedPilotLeftStickY = Robot::Avg(adjustedPilotLeftStickY, adjustedPilotRightStickY);
+      double AveragePosition = Robot::Avg(pilot.GetLeftY(), pilot.GetRightY());
       //set the right stick equal to the left stick so that they are equal
       //the *-1 is because electrical refuses to let us flip the wire polarity and insisted we do it in code
-      adjustedPilotRightStickY = adjustedPilotLeftStickY * -1;
+      drivetrain.TankDrive(AveragePosition, AveragePosition*-1, inputSentivityReduction);
     }
     else
     {
-      adjustedPilotLeftStickY = adjustedPilotLeftStickY;
-      adjustedPilotRightStickY = adjustedPilotRightStickY * -1;
+      drivetrain.TankDrive(pilot.GetLeftY(), pilot.GetRightY()*-1, inputSentivityReduction);
     }
-    drivetrain.TankDrive(adjustedPilotLeftStickY, adjustedPilotRightStickY, inputSentivityReduction);
   }
 
 }
@@ -138,20 +122,20 @@ double Robot::Avg(double val1, double val2)
 
 void Robot::PlaceShuffleboardTiles()
 {
-  frc::SmartDashboard::PutBoolean("ARCADE DRIVE", true);
+  frc::SmartDashboard::PutBoolean("Arcade Drive", true);
   frc::SmartDashboard::PutNumber("Tank Assist", 0.05);
-  frc::SmartDashboard::PutNumber("input sensitivity", 0.4);
-  frc::SmartDashboard::PutNumber("TurningSensitivity", 0.6);
+  frc::SmartDashboard::PutNumber("Input Sensitivity", 0.4);
+  frc::SmartDashboard::PutNumber("Turning Sensitivity", 0.6);
   frc::SmartDashboard::PutNumber("Deadzone Size", 0.05);
 }
 
 void Robot::GetTeleopShuffleBoardValues()
 {
   //collect values from shuffleboard
-  arcadeDrive = frc::SmartDashboard::GetBoolean("ARCADE DRIVE", true);
+  arcadeDrive = frc::SmartDashboard::GetBoolean("Arcade Drive", true);
   tankAssist = frc::SmartDashboard::GetNumber("Tank Assist", 0.08);
-  defaultinputSensitivity = frc::SmartDashboard::GetNumber("input sensitivity", 0.4);
-  turningSensitivity = frc::SmartDashboard::GetNumber("TurningSensitivity", 0.6);
+  defaultInputSensitivity = frc::SmartDashboard::GetNumber("Input Sensitivity", 0.4);
+  turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.6);
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 }
 

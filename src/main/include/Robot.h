@@ -78,7 +78,7 @@ class Robot : public frc::TimedRobot {
   double deadzoneLimit = 0.05;
 
   const double driftInputSensitivity = 1.0;
-  double defaultinputSensitivity = 0.4;
+  double defaultInputSensitivity = 0.4;
 
   double turningSensitivity = 0.6;
 
