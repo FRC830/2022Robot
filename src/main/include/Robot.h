@@ -13,6 +13,8 @@
 #include <frc/SpeedController.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <cmath> 
+#include <frc/Solenoid.h>
+#include <frc/DoubleSolenoid.h>
 
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/shuffleboard/ShuffleboardTab.h>
@@ -35,6 +37,7 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
   void HandleDrivetrain();
+  void HandleSolenoids();
   double Deadzone(double pilotStickY);
 
   /*=============
@@ -100,4 +103,10 @@ class Robot : public frc::TimedRobot {
   
   // This is where we will put code for our motors and other sensors for the robot
   // The motors that we will be using for the drivetrain are NEO motors, so work can begin here once the electrical board is finished
+
+  //Pnematic Initial Values
+
+  // The second and third arguements are the channels
+  frc::DoubleSolenoid doubleSolenoid{frc::PneumaticsModuleType::CTREPCM, 1, 2};  
+
 };

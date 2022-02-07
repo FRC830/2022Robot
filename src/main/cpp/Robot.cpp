@@ -42,6 +42,7 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
   HandleDrivetrain();
+  HandleSolenoids();
 }
 
 void Robot::DisabledInit() {}
@@ -129,7 +130,18 @@ void Robot::HandleDrivetrain() {
     }
     drivetrain.TankDrive(pilotLeftStickY, pilotRightStickY, inputSentivityReduction);
   }
+}
 
+void Robot::HandleSolenoids() {
+  if (copilot.GetBButton() == 1){
+    doubleSolenoid.Set(frc::DoubleSolenoid::kForward);
+  }
+  else if(copilot.GetBButton() == 0){
+    doubleSolenoid.Set(frc::DoubleSolenoid::kReverse);
+  }
+  else {
+    doubleSolenoid.Set(frc::DoubleSolenoid::kOff);
+  }
 }
 
 double Robot::Deadzone(double amm){
