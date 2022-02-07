@@ -21,6 +21,8 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#define PI 3.14159265
+
 
 const double deadZoneLimit = 0.05; 
 
@@ -36,12 +38,27 @@ class Robot : public frc::TimedRobot {
   void DisabledPeriodic() override;
   void TestInit() override;
   void TestPeriodic() override;
+  //Handle spam below
   void HandleDrivetrain();
+  //General util stuff
   void PlaceShuffleboardTiles();
   void GetTeleopShuffleBoardValues();
+  void GetRobotShuffleoardValues()
   void GetControllerInput();
   double Deadzone(double pilotStickY);
   double Avg(double val1, double val2);
+  double EncoderTicksToInches(double ticks, double TicksPerRev);
+  double InchesToEncoderTicks(double inches, double TicksPerRev);
+  double EncoderTicksToInches(double ticks);
+  double InchesToEncoderTicks(double inches);
+  //Auton functions... for auton...
+  void LinearMove(double distance, double motorSpeed);
+  void CenterPointTurn(double degrees, double motorSpeed);
+  void CompoundMove(double distance, double degrees, double motorSpeed);
+  //Auton Comb...
+  void BasicMoveAuton();
+
+
 
 
   /*=============
@@ -57,6 +74,12 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax motorFR = rev::CANSparkMax(3, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
   rev::CANSparkMax motorBL = rev::CANSparkMax(2, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
   rev::CANSparkMax motorBR = rev::CANSparkMax(4, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
+  rev::SparkMaxRelativeEncoder motorFLEncoder = motorFL.GetEncoder();
+  rev::SparkMaxRelativeEncoder motorFREncoder = motorFR.GetEncoder();
+  rev::SparkMaxRelativeEncoder motorBLEncoder = motorBL.GetEncoder();
+  rev::SparkMaxRelativeEncoder motorBREncoder = motorBR.GetEncoder();
+
+  int autonMode;
 
   // Xbox controller object contruct, does not contain correct port, pilot goes in 0 copilot goes in 1
   ModifiableController pilot = ModifiableController(0);
@@ -93,4 +116,12 @@ class Robot : public frc::TimedRobot {
   
   // This is where we will put code for our motors and other sensors for the robot
   // The motors that we will be using for the drivetrain are NEO motors, so work can begin here once the electrical board is finished
+
+  const double WheelRadiusInches = 3.0;
+
+  bool autonMovingMotor = false;
+
+  int autonStep = 1;
+
+  bool invertRobot;
 };

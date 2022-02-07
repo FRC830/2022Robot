@@ -4,12 +4,18 @@
 
 #include "Robot.h"
 #include <iostream>
+#include <math.h>
 
 
 using namespace std;
 
 void Robot::RobotInit() {
   PlaceShuffleboardTiles();
+  GetRobotShuffleoardValues();
+  if (invertRobot)
+    motorGroupRight.SetInverted(true);
+  else
+    motorGroupRight.SetInverted(true);
 }
 
 /*
@@ -25,10 +31,24 @@ void Robot::RobotPeriodic() {}
 
 
 void Robot::AutonomousInit() {
+
+  // look at suffleboard...
+  autonMode = frc::SmartDashboard::GetNumber("Auton Mode", 1);
+  
   
 }
 
 void Robot::AutonomousPeriodic() {
+
+
+  switch(autonMode) {
+    case 1:
+      BasicMoveAuton(); 
+      break;
+    default:
+      BasicMoveAuton(); 
+      break;
+}
 
 }
 
@@ -78,9 +98,9 @@ void Robot::HandleDrivetrain() {
   if (arcadeDrive)
   {
     std::cout << "arcadeDrive" << std::endl;
-    double turningSpeed = pilot.GetLeftX() * -1 * turningSensitivity;
-    double forwardSpeed = pilot.GetRightY() * -1;
-    drivetrain.ArcadeDrive(turningSpeed, forwardSpeed, inputSentivityReduction);
+    double turningSpeed = pilot.GetLeftX() * turningSensitivity;
+    double forwardSpeed = pilot.GetRightY();
+    drivetrain.ArcadeDrive(forwardSpeed, turningSpeed, inputSentivityReduction);
   }
   else
   {
@@ -94,11 +114,11 @@ void Robot::HandleDrivetrain() {
       double AveragePosition = Robot::Avg(pilot.GetLeftY(), pilot.GetRightY());
       //set the right stick equal to the left stick so that they are equal
       //the *-1 is because electrical refuses to let us flip the wire polarity and insisted we do it in code
-      drivetrain.TankDrive(AveragePosition, AveragePosition*-1, inputSentivityReduction);
+      drivetrain.TankDrive(AveragePosition, AveragePosition, inputSentivityReduction);
     }
     else
     {
-      drivetrain.TankDrive(pilot.GetLeftY(), pilot.GetRightY()*-1, inputSentivityReduction);
+      drivetrain.TankDrive(pilot.GetLeftY(), pilot.GetRightY(), inputSentivityReduction);
     }
   }
 
@@ -127,6 +147,8 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutNumber("Input Sensitivity", 0.4);
   frc::SmartDashboard::PutNumber("Turning Sensitivity", 0.6);
   frc::SmartDashboard::PutNumber("Deadzone Size", 0.05);
+  frc::SmartDashboard::PutNumber("Auton Mode", 1);
+  frc::SmartDashboard::PutBoolean("Invert Robot", false);
 }
 
 void Robot::GetTeleopShuffleBoardValues()
@@ -139,6 +161,73 @@ void Robot::GetTeleopShuffleBoardValues()
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 }
 
+void Robot::GetRobotShuffleoardValues()
+{
+  invertRobot = frc::SmartDashboard::GetBoolean("Invert Robot", false);
+}
+
+void Robot::BasicMoveAuton() {
+  autonStep = 1;
+  switch(autonStep)
+  {
+    case 1:
+      LinearMove(10.0, 0.2);
+    default:
+      LinearMove(-10.0, 0.2);
+  }
+    
+}
+
+void Robot::LinearMove(double distance, double moterSpeed)
+{
+  assert (moterSpeed > 0);
+  assert (distance != 0);
+
+  double encoderDistance = InchesToEncoderTicks(distance);
+
+  double motorFLEncoderTarget = motorFLEncoder.GetPosition() + encoderDistance;
+  double motorFREncoderTarget = motorFREncoder.GetPosition() + encoderDistance;
+  double motorBLEncoderTarget = motorBLEncoder.GetPosition() + encoderDistance;
+  double motorBREncoderTarget = motorBREncoder.GetPosition() + encoderDistance;
+
+  int direction;
+
+  direction = std::copysign(direction, distance);
+
+  if ((motorFLEncoder.GetPosition() * direction < motorFLEncoderTarget * direction) && 
+        (motorFREncoder.GetPosition() * direction < motorFREncoderTarget * direction))
+  {
+    drivetrain.TankDrive(moterSpeed, moterSpeed, true);
+  }
+  else 
+  {
+    autonStep+=1;
+  }
+
+}
+
+double Robot::EncoderTicksToInches(double ticks)
+{
+  double c = WheelRadiusInches * PI * 2;
+  return (c * (ticks));
+}
+
+double Robot::InchesToEncoderTicks(double inches)
+{
+  double c = WheelRadiusInches * PI * 2;
+  return ((inches / c)); 
+}
+double Robot::EncoderTicksToInches(double ticks, double TicksPerRev)
+{
+  double c = WheelRadiusInches * PI * 2;
+  return (c * (ticks / TicksPerRev));
+}
+
+double Robot::InchesToEncoderTicks(double inches, double TicksPerRev)
+{
+  double c = WheelRadiusInches * PI * 2;
+  return ((inches / c) * TicksPerRev); 
+}
 
 
 #ifndef RUNNING_FRC_TESTS
