@@ -43,7 +43,7 @@ class Robot : public frc::TimedRobot {
   //General util stuff
   void PlaceShuffleboardTiles();
   void GetTeleopShuffleBoardValues();
-  void GetRobotShuffleoardValues()
+  void GetRobotShuffleoardValues();
   void GetControllerInput();
   double Deadzone(double pilotStickY);
   double Avg(double val1, double val2);
@@ -123,5 +123,13 @@ class Robot : public frc::TimedRobot {
 
   int autonStep = 1;
 
+
+  bool newAutonCall = true;
+
+  double motorFLEncoderTarget;
+  double motorFREncoderTarget;
+  double motorBLEncoderTarget;
+  double motorBREncoderTarget;
+  
   bool invertRobot;
 };

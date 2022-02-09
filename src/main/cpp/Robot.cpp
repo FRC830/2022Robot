@@ -16,6 +16,11 @@ void Robot::RobotInit() {
     motorGroupRight.SetInverted(true);
   else
     motorGroupRight.SetInverted(true);
+
+  motorFLEncoder.SetPosition(0);
+  motorFREncoder.SetPosition(0);
+  motorBLEncoder.SetPosition(0);
+  motorBREncoder.SetPosition(0);
 }
 
 /*
@@ -39,18 +44,18 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
+    //drivetrain.TankDrive(0.5,0.5,false);
 
-
-  switch(autonMode) {
-    case 1:
+   switch(autonMode) {
+     case 1:
       BasicMoveAuton(); 
-      break;
-    default:
-      BasicMoveAuton(); 
-      break;
+       break;
+     default:
+       BasicMoveAuton(); 
+       break;
+  }
 }
 
-}
 
 void Robot::TeleopInit() {
   
@@ -167,41 +172,64 @@ void Robot::GetRobotShuffleoardValues()
 }
 
 void Robot::BasicMoveAuton() {
+  //std::printf("Basic move auton");
   autonStep = 1;
+  //cout << "Basic Auton is running!" << endl;
   switch(autonStep)
   {
     case 1:
-      LinearMove(10.0, 0.2);
-    default:
-      LinearMove(-10.0, 0.2);
+      //std::printf("In the switch");
+      LinearMove(300.0, 0.4);
+      break;
+    case 2:
+      std::printf("New move!!");
+      LinearMove(-300.0, 0.4);
+      break;
   }
     
 }
 
 void Robot::LinearMove(double distance, double moterSpeed)
 {
+  // std::printf("Distance: " + std::str(distance));
+  // std::printf("Moter Speed: " + std::str(moterSpeed));
   assert (moterSpeed > 0);
   assert (distance != 0);
 
   double encoderDistance = InchesToEncoderTicks(distance);
+  if (newAutonCall)
+  {
+    std::cout << std::noboolalpha << newAutonCall << std::endl;
+    std::printf("Here");
+    
+    motorFLEncoderTarget = /*motorFLEncoder.GetPosition()*/ + encoderDistance;
+    motorFREncoderTarget = /*motorFREncoder.GetPosition()*/ + encoderDistance;
+    motorBLEncoderTarget = /*motorBLEncoder.GetPosition()*/ + encoderDistance;
+    motorBREncoderTarget = /*motorBREncoder.GetPosition()*/ + encoderDistance;
+    newAutonCall = false;
+    std::cout << std::noboolalpha << newAutonCall << std::endl;
+  }
 
-  double motorFLEncoderTarget = motorFLEncoder.GetPosition() + encoderDistance;
-  double motorFREncoderTarget = motorFREncoder.GetPosition() + encoderDistance;
-  double motorBLEncoderTarget = motorBLEncoder.GetPosition() + encoderDistance;
-  double motorBREncoderTarget = motorBREncoder.GetPosition() + encoderDistance;
+
+
 
   int direction;
-
-  direction = std::copysign(direction, distance);
+  //here
+  //std::printf("in the function");
+  direction = distance / abs(distance);
 
   if ((motorFLEncoder.GetPosition() * direction < motorFLEncoderTarget * direction) && 
         (motorFREncoder.GetPosition() * direction < motorFREncoderTarget * direction))
   {
+    //std::printf("in the if");
     drivetrain.TankDrive(moterSpeed, moterSpeed, true);
   }
-  else 
+  else
   {
-    autonStep+=1;
+    drivetrain.TankDrive(0, 0, false);
+    autonStep++;
+    newAutonCall = true;
+    return;
   }
 
 }
