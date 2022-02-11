@@ -132,16 +132,15 @@ void Robot::HandleDrivetrain() {
   }
 }
 
+
 void Robot::HandleSolenoids() {
   if (copilot.GetBButton() == 1){
     doubleSolenoid.Set(frc::DoubleSolenoid::kForward);
   }
-  else if(copilot.GetBButton() == 0){
+  else{
     doubleSolenoid.Set(frc::DoubleSolenoid::kReverse);
   }
-  else {
-    doubleSolenoid.Set(frc::DoubleSolenoid::kOff);
-  }
+
 }
 
 double Robot::Deadzone(double amm){
