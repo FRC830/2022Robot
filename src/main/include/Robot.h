@@ -51,6 +51,7 @@ class Robot : public frc::TimedRobot {
   double InchesToEncoderTicks(double inches, double TicksPerRev);
   double EncoderTicksToInches(double ticks);
   double InchesToEncoderTicks(double inches);
+  double DegreesToInches(double degrees);
   //Auton functions... for auton...
   void LinearMove(double distance, double motorSpeed);
   void CenterPointTurn(double degrees, double motorSpeed);
@@ -132,4 +133,7 @@ class Robot : public frc::TimedRobot {
   double motorBREncoderTarget;
   
   bool invertRobot;
+
+  double gearRatio;
+  double rotationAxisRadius;
 };
