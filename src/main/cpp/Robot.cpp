@@ -12,9 +12,8 @@ using namespace std;
 void Robot::RobotInit() {
   PlaceShuffleboardTiles();
   GetRobotShuffleoardValues();
-  if (invertRobot)
-    motorGroupRight.SetInverted(true);
-  else
+  invertRobot ? 
+    motorGroupRight.SetInverted(true) : 
     motorGroupRight.SetInverted(true);
 
   motorFLEncoder.SetPosition(0);
@@ -177,7 +176,7 @@ void Robot::GetTeleopShuffleBoardValues()
 void Robot::GetRobotShuffleoardValues()
 {
   invertRobot = frc::SmartDashboard::GetBoolean("Invert Robot", false);
-  gearRatio = frc::SmartDashboard::GetNumber("GearRatio", 3/20);
+  gearRatio = frc::SmartDashboard::GetNumber("GearRatio", 20/3);
 }
 
 void Robot::BasicMoveAuton() {
@@ -196,18 +195,22 @@ void Robot::BasicMoveAuton() {
       std::printf("New move!!");
       LinearMove(30.0, 0.2);
       break;
+    default:
+      std::cout << "AUTON IS OVER, BOZO" << std::endl;
+      break;
   }
-    
+  return;
 }
 
-void Robot::LinearMove(double distance, double moterSpeed)
+void Robot::LinearMove(double distance, double motorSpeed)
 {
   // std::printf("Distance: " + std::str(distance));
-  // std::printf("Moter Speed: " + std::str(moterSpeed));
-  assert (moterSpeed > 0);
+  // std::printf("motor Speed: " + std::str(motorSpeed));
+  assert (motorSpeed > 0);
   assert (distance != 0);
 
   double encoderDistance = InchesToEncoderTicks(distance);
+  std::cout << std::to_string(encoderDistance) << std::endl;
   if (newAutonCall)
   {
     std::cout << std::noboolalpha << newAutonCall << std::endl;
@@ -229,12 +232,15 @@ void Robot::LinearMove(double distance, double moterSpeed)
   //std::printf("in the function");
   direction = distance / abs(distance);
 
+  std::cout << ((std::to_string(motorFLEncoder.GetPosition()) + std::to_string(motorFLEncoderTarget) +
+          std::to_string(motorFREncoder.GetPosition()) +std::to_string( motorFREncoderTarget) )) << std::endl;
+
   if ((motorFLEncoder.GetPosition() * direction < motorFLEncoderTarget * direction) && 
         (motorFREncoder.GetPosition() * direction < motorFREncoderTarget * direction))
   {
     std::cout << "Distance to target: " << std::to_string(motorFLEncoderTarget - motorFLEncoder.GetPosition()) << std::endl;
-    drivetrain.TankDrive(moterSpeed * direction, moterSpeed * direction, true);
-    //std::cout << "Moterspeed: " << std::to_string(moterSpeed) << std::endl; 
+    drivetrain.TankDrive(motorSpeed * direction, motorSpeed * direction, true);
+    return;
   }
   else
   {
@@ -249,41 +255,40 @@ void Robot::LinearMove(double distance, double moterSpeed)
 
 }
 
-void Robot::CenterPointTurn(double degrees, double moterSpeed)
+void Robot::CenterPointTurn(double degrees, double motorSpeed)
 {
   // std::printf("Distance: " + std::str(distance));
-  // std::printf("Moter Speed: " + std::str(moterSpeed));
-  assert (moterSpeed > 0);
+  // std::printf("motor Speed: " + std::str(motorSpeed));
+  assert (motorSpeed > 0);
   assert (degrees != 0);
 
   double distance = DegreesToInches(degrees);
   double encoderDistance = InchesToEncoderTicks(distance);
-  if (newAutonCall)
-  {
-    std::cout << std::noboolalpha << newAutonCall << std::endl;
-    std::printf("Here");
-    
-    motorFLEncoderTarget = motorFLEncoder.GetPosition() + encoderDistance;
-    motorFREncoderTarget = motorFREncoder.GetPosition() + encoderDistance;
-    motorBLEncoderTarget = motorBLEncoder.GetPosition() + encoderDistance;
-    motorBREncoderTarget = motorBREncoder.GetPosition() + encoderDistance;
-    newAutonCall = false;
-    std::cout << std::noboolalpha << newAutonCall << std::endl;
-  }
-
-
-
 
   int direction;
   //here
   //std::printf("in the function");
   direction = distance / abs(distance);
 
+  if (newAutonCall)
+  {
+
+    std::cout << std::noboolalpha << newAutonCall << std::endl;
+    std::printf("Here");
+    
+    motorFLEncoderTarget = motorFLEncoder.GetPosition() + encoderDistance;
+    motorBLEncoderTarget = motorBLEncoder.GetPosition() + encoderDistance;
+    motorFREncoderTarget = motorFREncoder.GetPosition() - encoderDistance;
+    motorBREncoderTarget = motorBREncoder.GetPosition() - encoderDistance;
+    newAutonCall = false;
+    std::cout << std::noboolalpha << newAutonCall << std::endl;
+  }
+
   if ((motorFLEncoder.GetPosition() * direction < motorFLEncoderTarget * direction) && 
         (motorFREncoder.GetPosition() * direction < motorFREncoderTarget * direction))
   {
-    drivetrain.TankDrive(moterSpeed, moterSpeed, true);
-    std::cout << "Moterspeed: " << std::to_string(moterSpeed) << std::endl; 
+    drivetrain.TankDrive(motorSpeed, motorSpeed, true);
+    std::cout << "motorspeed: " << std::to_string(motorSpeed) << std::endl; 
   }
   else
   {
