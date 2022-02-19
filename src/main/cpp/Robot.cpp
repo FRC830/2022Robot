@@ -15,11 +15,6 @@ void Robot::RobotInit() {
   invertRobot ? 
     motorGroupRight.SetInverted(true) : 
     motorGroupRight.SetInverted(true);
-
-  motorFLEncoder.SetPosition(0);
-  motorFREncoder.SetPosition(0);
-  motorBLEncoder.SetPosition(0);
-  motorBREncoder.SetPosition(0);
 }
 
 /*
@@ -35,20 +30,52 @@ void Robot::RobotPeriodic() {}
 
 
 void Robot::AutonomousInit() {
+  firstCallToAuton = true;
+  firstCallToAuton = true;
+  autonMovingMotor = false;
+  autonStep = 1;
+  newAutonCall = true;
+
+
+  motorFLEncoder.SetPosition(0.0);
+  motorFREncoder.SetPosition(0.0);
+  motorBLEncoder.SetPosition(0.0);
+  motorBREncoder.SetPosition(0.0);
+
+  if (motorBREncoder.SetPosition(0.0) == rev::REVLibError::kOk)
+  {
+    std::cout << std::endl << "BR Encoder successfully set to: " << motorBREncoder.GetPosition() << std::endl;
+  }
+  std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
+  std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
+  std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
 
   // look at suffleboard...
   autonMode = frc::SmartDashboard::GetNumber("Auton Mode", 1);
+
+  firstCallToAuton = true;
 
   // motorFLEncoder.SetPosition(0);
   // motorFREncoder.SetPosition(0);
   // motorBLEncoder.SetPosition(0);
   // motorBREncoder.SetPosition(0);
+
   
   
 }
 
 void Robot::AutonomousPeriodic() {
-    //drivetrain.TankDrive(0.5,0.5,false);
+
+  //if (firstCallToAuton)
+  //{
+    //firstCallToAuton = false;
+    //return;
+  //}
+
+  std::cout << "BR Encoder " << motorFLEncoder.GetPosition() << std::endl;
+  std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
+  std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
+  std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
 
    switch(autonMode) {
      case 1:
@@ -78,7 +105,13 @@ void Robot::TeleopPeriodic() {
   HandleDrivetrain();
 }
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+  firstCallToAuton = true;
+  firstCallToAuton = true;
+  autonMovingMotor = false;
+  autonStep = 1;
+  newAutonCall = true;
+}
 
 void Robot::DisabledPeriodic() {}
 
@@ -109,7 +142,7 @@ void Robot::HandleDrivetrain() {
     std::cout << "arcadeDrive" << std::endl;
     double turningSpeed = pilot.GetLeftX() * turningSensitivity;
     double forwardSpeed = pilot.GetRightY();
-    drivetrain.ArcadeDrive(forwardSpeed, turningSpeed, inputSentivityReduction);
+    drivetrain.ArcadeDrive(forwardSpeed, turningSpeed * -1, inputSentivityReduction);
   }
   else
   {
@@ -159,7 +192,7 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutNumber("Auton Mode", 1);
   frc::SmartDashboard::PutBoolean("Invert Robot", false);
   
-  frc::SmartDashboard::PutNumber("GearRatio", 3/20);
+  //frc::SmartDashboard::PutNumber("GearRatio", gearRatio);
 }
 
 void Robot::GetTeleopShuffleBoardValues()
@@ -176,27 +209,26 @@ void Robot::GetTeleopShuffleBoardValues()
 void Robot::GetRobotShuffleoardValues()
 {
   invertRobot = frc::SmartDashboard::GetBoolean("Invert Robot", false);
-  gearRatio = frc::SmartDashboard::GetNumber("GearRatio", 20/3);
+  //gearRatio = frc::SmartDashboard::GetNumber("GearRatio", gearRatio);
 }
 
 void Robot::BasicMoveAuton() {
+  // std::cout << "gear ratio: " << std::to_string(gearRatio) << std::endl;
   //drivetrain.TankDrive(0.3, 0.3, true);
   
   //std::printf("Basic move ton");
   //autonStep = 1;
-  //cout << "Basic Auton is running!" << endl;
+  std::cout << "Basic Auton is running!" << std::endl;
   switch(autonStep)
   {
     case 1:
       //std::printf("In the switch");
-      LinearMove(-30.0, 0.2);
+      CenterPointTurn(-90.0, 0.0009);
       break;
     case 2:
-      std::printf("New move!!");
-      LinearMove(30.0, 0.2);
+      CenterPointTurn(90.0, 0.0009);
       break;
     default:
-      std::cout << "AUTON IS OVER, BOZO" << std::endl;
       break;
   }
   return;
@@ -210,7 +242,7 @@ void Robot::LinearMove(double distance, double motorSpeed)
   assert (distance != 0);
 
   double encoderDistance = InchesToEncoderTicks(distance);
-  std::cout << std::to_string(encoderDistance) << std::endl;
+  std::cout << "encoder distance in ticks: " << std::to_string(encoderDistance) << std::endl;
   if (newAutonCall)
   {
     std::cout << std::noboolalpha << newAutonCall << std::endl;
@@ -232,8 +264,8 @@ void Robot::LinearMove(double distance, double motorSpeed)
   //std::printf("in the function");
   direction = distance / abs(distance);
 
-  std::cout << ((std::to_string(motorFLEncoder.GetPosition()) + std::to_string(motorFLEncoderTarget) +
-          std::to_string(motorFREncoder.GetPosition()) +std::to_string( motorFREncoderTarget) )) << std::endl;
+  // std::cout << ((std::to_string(motorFLEncoder.GetPosition()) + std::to_string(motorFLEncoderTarget) +
+  //         std::to_string(motorFREncoder.GetPosition()) +std::to_string( motorFREncoderTarget) )) << std::endl;
 
   if ((motorFLEncoder.GetPosition() * direction < motorFLEncoderTarget * direction) && 
         (motorFREncoder.GetPosition() * direction < motorFREncoderTarget * direction))
@@ -256,50 +288,51 @@ void Robot::LinearMove(double distance, double motorSpeed)
 }
 
 void Robot::CenterPointTurn(double degrees, double motorSpeed)
-{
-  // std::printf("Distance: " + std::str(distance));
-  // std::printf("motor Speed: " + std::str(motorSpeed));
-  assert (motorSpeed > 0);
-  assert (degrees != 0);
+ {
+//   // std::printf("Distance: " + std::str(distance));
+//   // std::printf("motor Speed: " + std::str(motorSpeed));
+   assert (motorSpeed > 0);
+   assert (degrees != 0);
 
-  double distance = DegreesToInches(degrees);
-  double encoderDistance = InchesToEncoderTicks(distance);
+   double distance = DegreesToInches(degrees);
+   double encoderDistance = InchesToEncoderTicks(distance);
+    std::cout << std::to_string(encoderDistance) << std::endl;
 
-  int direction;
-  //here
-  //std::printf("in the function");
-  direction = distance / abs(distance);
+    int direction;
+    //here
+    //std::printf("in the function");
+    direction = distance / -1 * abs(distance);
 
-  if (newAutonCall)
-  {
+    if (newAutonCall)
+    {
 
-    std::cout << std::noboolalpha << newAutonCall << std::endl;
-    std::printf("Here");
-    
-    motorFLEncoderTarget = motorFLEncoder.GetPosition() + encoderDistance;
-    motorBLEncoderTarget = motorBLEncoder.GetPosition() + encoderDistance;
-    motorFREncoderTarget = motorFREncoder.GetPosition() - encoderDistance;
-    motorBREncoderTarget = motorBREncoder.GetPosition() - encoderDistance;
-    newAutonCall = false;
-    std::cout << std::noboolalpha << newAutonCall << std::endl;
-  }
+      std::cout << std::noboolalpha << newAutonCall << std::endl;
+      std::printf("Here");
+      
+      motorFLEncoderTarget = motorFLEncoder.GetPosition() + encoderDistance;
+      motorBLEncoderTarget = motorBLEncoder.GetPosition() + encoderDistance;
+      motorFREncoderTarget = motorFREncoder.GetPosition() - encoderDistance;
+      motorBREncoderTarget = motorBREncoder.GetPosition() - encoderDistance;
+      newAutonCall = false;
+      std::cout << std::noboolalpha << newAutonCall << std::endl;
+    }
 
-  if ((motorFLEncoder.GetPosition() * direction < motorFLEncoderTarget * direction) && 
-        (motorFREncoder.GetPosition() * direction < motorFREncoderTarget * direction))
-  {
-    drivetrain.TankDrive(motorSpeed, motorSpeed, true);
-    std::cout << "motorspeed: " << std::to_string(motorSpeed) << std::endl; 
-  }
-  else
-  {
-    std::cout << "Done with the drive" << std::endl;
-    drivetrain.TankDrive(0, 0, false);
-    std::cout << "auton step before: " << std::to_string(autonStep) << std::endl;
-    autonStep++;
-    std::cout << "auton step after: " << std::to_string(autonStep) << std::endl;
-    newAutonCall = true;
-    return;
-  }
+    if ((motorFLEncoder.GetPosition() * direction * -1 < motorFLEncoderTarget * direction * -1) && 
+          (motorFREncoder.GetPosition() * direction < motorFREncoderTarget * direction))
+    {
+      drivetrain.TankDrive(motorSpeed * direction * -1, motorSpeed * direction, true);
+      std::cout << "motorspeed: " << std::to_string(motorSpeed) << std::endl; 
+    }
+    else
+    {
+      std::cout << "Done with the drive" << std::endl;
+      drivetrain.TankDrive(0, 0, false);
+      std::cout << "auton step before: " << std::to_string(autonStep) << std::endl;
+      autonStep++;
+      std::cout << "auton step after: " << std::to_string(autonStep) << std::endl;
+      newAutonCall = true;
+      return;
+    }
 
 }
 
@@ -311,6 +344,7 @@ double Robot::EncoderTicksToInches(double ticks)
 
 double Robot::InchesToEncoderTicks(double inches)
 {
+  assert(inches != 0);
   double c = WheelRadiusInches * PI * 2;
   return ((inches / c) * gearRatio); 
 }

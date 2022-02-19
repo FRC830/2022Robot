@@ -120,6 +120,8 @@ class Robot : public frc::TimedRobot {
 
   const double WheelRadiusInches = 3.0;
 
+  bool firstCallToAuton = true;
+
   bool autonMovingMotor = false;
 
   int autonStep = 1;
@@ -134,6 +136,8 @@ class Robot : public frc::TimedRobot {
   
   bool invertRobot;
 
-  double gearRatio;
-  double rotationAxisRadius;
+  double gearRatio =  20.0/3.0 * 3.0/2.0 * 30.0/29.0 * 30.0/29.5;
+  double rotationAxisRadius = 13;
+
+  
 };

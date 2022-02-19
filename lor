@@ -1,0 +1,55 @@
+diff --git a/src/main/cpp/Robot.cpp b/src/main/cpp/Robot.cpp
+index ea71d33..0da6341 100644
+--- a/src/main/cpp/Robot.cpp
++++ b/src/main/cpp/Robot.cpp
+@@ -159,7 +159,7 @@ void Robot::PlaceShuffleboardTiles()
+   frc::SmartDashboard::PutNumber("Auton Mode", 1);
+   frc::SmartDashboard::PutBoolean("Invert Robot", false);
+   
+-  frc::SmartDashboard::PutNumber("GearRatio", 3/20);
++  frc::SmartDashboard::PutNumber("GearRatio", 20/3);
+ }
+ 
+ void Robot::GetTeleopShuffleBoardValues()
+@@ -180,6 +180,7 @@ void Robot::GetRobotShuffleoardValues()
+ }
+ 
+ void Robot::BasicMoveAuton() {
++  std::cout << "gear ratio: " << std::to_string(gearRatio) << std::endl;
+   //drivetrain.TankDrive(0.3, 0.3, true);
+   
+   //std::printf("Basic move ton");
+@@ -196,7 +197,7 @@ void Robot::BasicMoveAuton() {
+       LinearMove(30.0, 0.2);
+       break;
+     default:
+-      std::cout << "AUTON IS OVER, BOZO" << std::endl;
++      std::cout << "~";
+       break;
+   }
+   return;
+@@ -210,7 +211,7 @@ void Robot::LinearMove(double distance, double motorSpeed)
+   assert (distance != 0);
+ 
+   double encoderDistance = InchesToEncoderTicks(distance);
+-  std::cout << std::to_string(encoderDistance) << std::endl;
++  std::cout << "encoder distance in ticks: " << std::to_string(encoderDistance) << std::endl;
+   if (newAutonCall)
+   {
+     std::cout << std::noboolalpha << newAutonCall << std::endl;
+@@ -264,6 +265,7 @@ void Robot::CenterPointTurn(double degrees, double motorSpeed)
+ 
+   double distance = DegreesToInches(degrees);
+   double encoderDistance = InchesToEncoderTicks(distance);
++  std::cout << std::to_string(encoderDistance) << std::endl;
+ 
+   int direction;
+   //here
+@@ -311,6 +313,7 @@ double Robot::EncoderTicksToInches(double ticks)
+ 
+ double Robot::InchesToEncoderTicks(double inches)
+ {
++  assert(inches != 0);
+   double c = WheelRadiusInches * PI * 2;
+   return ((inches / c) * gearRatio); 
+ }
