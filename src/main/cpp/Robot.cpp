@@ -15,6 +15,11 @@ void Robot::RobotInit() {
   invertRobot ? 
     motorGroupRight.SetInverted(true) : 
     motorGroupRight.SetInverted(true);
+
+  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 }
 
 /*
@@ -66,11 +71,11 @@ void Robot::AutonomousInit() {
 
 void Robot::AutonomousPeriodic() {
 
-  //if (firstCallToAuton)
-  //{
-    //firstCallToAuton = false;
-    //return;
-  //}
+  if (firstCallToAuton)
+  {
+    firstCallToAuton = false;
+    return;
+  }
 
   std::cout << "BR Encoder " << motorFLEncoder.GetPosition() << std::endl;
   std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
@@ -79,10 +84,13 @@ void Robot::AutonomousPeriodic() {
 
    switch(autonMode) {
      case 1:
-      BasicMoveAuton(); 
+       Taxi(); 
        break;
+     case 2:
+        TestAuton();
+        break; 
      default:
-       BasicMoveAuton(); 
+       Taxi(); 
        break;
   }
 }
@@ -97,6 +105,11 @@ void Robot::TeleopInit() {
   copilot.setDeadzoneLimit(0.1);
   pilot.setSensitivity();
   pilot.setSensitivityLevel(defaultInputSensitivity);
+
+    motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   
 }
 
@@ -189,7 +202,7 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutNumber("Input Sensitivity", 0.4);
   frc::SmartDashboard::PutNumber("Turning Sensitivity", 0.6);
   frc::SmartDashboard::PutNumber("Deadzone Size", 0.05);
-  frc::SmartDashboard::PutNumber("Auton Mode", 1);
+  frc::SmartDashboard::PutNumber("Auton Mode", 2);
   frc::SmartDashboard::PutBoolean("Invert Robot", false);
   
   //frc::SmartDashboard::PutNumber("GearRatio", gearRatio);
@@ -212,7 +225,14 @@ void Robot::GetRobotShuffleoardValues()
   //gearRatio = frc::SmartDashboard::GetNumber("GearRatio", gearRatio);
 }
 
-void Robot::BasicMoveAuton() {
+void Robot::Taxi() {
+  if (autonStep == 1) {
+    Robot::LinearMove(-84.75, 0.5);
+
+  }
+}
+
+void Robot::TestAuton() {
   // std::cout << "gear ratio: " << std::to_string(gearRatio) << std::endl;
   //drivetrain.TankDrive(0.3, 0.3, true);
   
@@ -223,10 +243,10 @@ void Robot::BasicMoveAuton() {
   {
     case 1:
       //std::printf("In the switch");
-      CenterPointTurn(-90.0, 0.0009);
+      CenterPointTurn(90.0, 0.0009);
       break;
     case 2:
-      CenterPointTurn(90.0, 0.0009);
+      CenterPointTurn(-90.0, 0.0009);
       break;
     default:
       break;
@@ -317,9 +337,17 @@ void Robot::CenterPointTurn(double degrees, double motorSpeed)
       std::cout << std::noboolalpha << newAutonCall << std::endl;
     }
 
+    
+    // The "if" continuously checks to see if we're done with the auton rotation
+    // The body underneath continues to run if we're not
+    // The "else" body runs once it sees that we are (and increases the autonStep)
+
     if ((motorFLEncoder.GetPosition() * direction * -1 < motorFLEncoderTarget * direction * -1) && 
           (motorFREncoder.GetPosition() * direction < motorFREncoderTarget * direction))
     {
+      std::printf((motorFLEncoder.GetPosition() * direction * -1 < motorFLEncoderTarget * direction * -1) ? "First: True\n" : "First: False\n");
+      std::printf( (motorFREncoder.GetPosition() * direction < motorFREncoderTarget * direction) ? "Second: True\n" : "Second: False\n");
+
       drivetrain.TankDrive(motorSpeed * direction * -1, motorSpeed * direction, true);
       std::cout << "motorspeed: " << std::to_string(motorSpeed) << std::endl; 
     }
