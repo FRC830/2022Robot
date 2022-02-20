@@ -106,10 +106,15 @@ void Robot::TeleopInit() {
   pilot.setSensitivity();
   pilot.setSensitivityLevel(defaultInputSensitivity);
 
+  if (ebrake)
+  {
+
     motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  
+  }
   
 }
 
@@ -204,6 +209,8 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutNumber("Deadzone Size", 0.05);
   frc::SmartDashboard::PutNumber("Auton Mode", 2);
   frc::SmartDashboard::PutBoolean("Invert Robot", false);
+
+  frc::SmartDashboard::PutBoolean("Ebrake", true);
   
   //frc::SmartDashboard::PutNumber("GearRatio", gearRatio);
 }
@@ -216,6 +223,8 @@ void Robot::GetTeleopShuffleBoardValues()
   defaultInputSensitivity = frc::SmartDashboard::GetNumber("Input Sensitivity", 0.4);
   turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.6);
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
+
+  ebrake = frc::SmartDashboard::GetNumber("Ebrake", true);
   
 }
 
