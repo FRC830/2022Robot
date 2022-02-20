@@ -71,6 +71,7 @@ class Robot : public frc::TimedRobot {
   //MADE IT INIT
   bool inputSentivityReduction;
 
+  bool ebrake = true;
   bool arcadeDrive = true;
   double tankAssist = 0.08;
 
