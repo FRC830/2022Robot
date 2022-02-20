@@ -49,6 +49,7 @@ void Robot::TeleopPeriodic() {
   GetTeleopShuffleBoardValues();
   HandleDrivetrain();
   HandleShooter();
+  HandleSolenoids();
 }
 
 void Robot::DisabledInit() {}
@@ -103,6 +104,16 @@ void Robot::HandleDrivetrain() {
       drivetrain.TankDrive(pilot.GetLeftY(), pilot.GetRightY()*-1, inputSentivityReduction);
     }
   }
+}
+
+
+void Robot::HandleSolenoids() {
+  if (copilot.GetBButton() == 1){
+    doubleSolenoid.Set(frc::DoubleSolenoid::kForward);
+  }
+  else{
+    doubleSolenoid.Set(frc::DoubleSolenoid::kReverse);
+  }
 
 }
 
@@ -113,6 +124,13 @@ void Robot::HandleShooter(){
   //this following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
   shooter= shooterMaximum-Deadzone(shooterMaximum-shooter);
  flywheelMotor.Set(TalonFXControlMode::PercentOutput, shooter);
+}
+
+//Replace the "0.8" with a changeable shuffleboard value 
+void Robot::HandleIntake(){
+  if (copilot.GetRightTriggerAxis() > 0.8){
+    
+  }
 }
 
 double Robot::Deadzone(double amm){
