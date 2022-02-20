@@ -10,6 +10,7 @@ using namespace std;
 
 void Robot::RobotInit() {
   PlaceShuffleboardTiles();
+  //flywheelFollowMotor.Set(TalonFXControlMode::Follower, 5);
 }
 
 /*
@@ -47,6 +48,7 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
   GetTeleopShuffleBoardValues();
   HandleDrivetrain();
+  HandleShooter();
 }
 
 void Robot::DisabledInit() {}
@@ -104,6 +106,15 @@ void Robot::HandleDrivetrain() {
 
 }
 
+void Robot::HandleShooter(){
+  shooterMaximum = frc::SmartDashboard::PutNumber("Shooter Max percentage", 0.5);
+  shooter = copilot.GetRightTriggerAxis("noS")*shooterMaximum;
+
+  //this following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
+  shooter= shooterMaximum-Deadzone(shooterMaximum-shooter);
+ flywheelMotor.Set(TalonFXControlMode::PercentOutput, shooter);
+}
+
 double Robot::Deadzone(double amm){
     //deadzoneLimit is arbitrary
     //make it smartdashboard
@@ -127,6 +138,8 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutNumber("Input Sensitivity", 0.4);
   frc::SmartDashboard::PutNumber("Turning Sensitivity", 0.6);
   frc::SmartDashboard::PutNumber("Deadzone Size", 0.05);
+
+  frc::SmartDashboard::PutNumber("Shooter Max percentage", 0.5);
 }
 
 void Robot::GetTeleopShuffleBoardValues()
@@ -138,6 +151,7 @@ void Robot::GetTeleopShuffleBoardValues()
   turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.6);
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 }
+
 
 #ifndef RUNNING_FRC_TESTS
 int main() {

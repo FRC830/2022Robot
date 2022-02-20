@@ -6,6 +6,7 @@
 
 #include <ModifiableController.h>
 #include <rev/CANSparkMax.h>
+#include "ctre/Phoenix.h"
 #include <string>
 #include <fmt/core.h>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -37,6 +38,7 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
   void HandleDrivetrain();
+  void HandleShooter();
   void PlaceShuffleboardTiles();
   void GetTeleopShuffleBoardValues();
   void GetControllerInput();
@@ -58,13 +60,19 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax motorBL = rev::CANSparkMax(2, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
   rev::CANSparkMax motorBR = rev::CANSparkMax(4, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
 
+
+  TalonFX flywheelMotor = TalonFX(5);
+  //TalonFX flywheelFollowMotor = TalonFX(6):
+
   // Xbox controller object contruct, does not contain correct port, pilot goes in 0 copilot goes in 1
   ModifiableController pilot = ModifiableController(0);
   ModifiableController copilot = ModifiableController(1);
 
   // Declare doubles to store joystick values
+  
   // Copilot joystick values, not currently using these values
- 
+  float shooterMaximum = 0.5;
+ double shooter = 0;
   
   // Whether inputs to TankDrive() should be squared (increases sensitivity of inputs at low speed)
 
