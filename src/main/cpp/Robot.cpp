@@ -143,6 +143,14 @@ void Robot::HandleSolenoids() {
 
 }
 
+
+//Replace the "0.8" with a changeable shuffleboard value 
+void Robot::HandleIntake(){
+  if (copilot.GetRightTriggerAxis() > 0.8){
+    
+  }
+}
+
 double Robot::Deadzone(double amm){
     //deadzoneLimit is arbitrary
     if (abs(amm) < 0.1) 

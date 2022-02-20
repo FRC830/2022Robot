@@ -15,6 +15,8 @@
 #include <cmath> 
 #include <frc/Solenoid.h>
 #include <frc/DoubleSolenoid.h>
+#include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
+
 
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/shuffleboard/ShuffleboardTab.h>
@@ -38,6 +40,7 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
   void HandleDrivetrain();
   void HandleSolenoids();
+  void HandleIntake();
   double Deadzone(double pilotStickY);
 
   /*=============
@@ -108,5 +111,9 @@ class Robot : public frc::TimedRobot {
 
   // The second and third arguements are the channels
   frc::DoubleSolenoid doubleSolenoid{frc::PneumaticsModuleType::CTREPCM, 1, 2};  
+
+  // Talon Motors Needed to run the Intake ("3" is an arbritrary value we'll change later)
+
+  ctre::phoenix::motorcontrol::can::TalonSRX intakeTalon{3};
 
 };
