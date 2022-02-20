@@ -139,10 +139,8 @@ void Robot::GetTeleopShuffleBoardValues()
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 }
 
-
-
 #ifndef RUNNING_FRC_TESTS
 int main() {
   return frc::StartRobot<Robot>();
 }
-#endif  
+#endif
