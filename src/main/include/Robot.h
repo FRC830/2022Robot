@@ -55,9 +55,11 @@ class Robot : public frc::TimedRobot {
   //Auton functions... for auton...
   void LinearMove(double distance, double motorSpeed);
   void CenterPointTurn(double degrees, double motorSpeed);
+  void AimRobotAtHub(double moterSpeed);
   void CompoundMove(double distance, double degrees, double motorSpeed);
   //Auton Comb...
   void Taxi();
+  void BackupAndShootAuton();
   void TestAuton();
 
 

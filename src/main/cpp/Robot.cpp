@@ -56,7 +56,7 @@ void Robot::AutonomousInit() {
   std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
 
   // look at suffleboard...
-  autonMode = frc::SmartDashboard::GetNumber("Auton Mode", 1);
+  autonMode = frc::SmartDashboard::GetNumber("Auton Mode", 2);
 
   firstCallToAuton = true;
 
@@ -87,8 +87,11 @@ void Robot::AutonomousPeriodic() {
        Taxi(); 
        break;
      case 2:
-        TestAuton();
-        break; 
+       BackupAndShootAuton();
+       break; 
+     case 3:
+       TestAuton();
+       break; 
      default:
        Taxi(); 
        break;
@@ -184,6 +187,33 @@ void Robot::HandleDrivetrain() {
 
 }
 
+void Robot::AimRobotAtHub(double motorSpeed)
+{
+  double distance = frc::SmartDashboard::GetNumber("Hub Center X Distance", -1);
+  if (distance == -1)
+  {
+    std::cout << "No Hub Detected" << std::endl;
+    return;
+  }
+  
+  double goal = frc::SmartDashboard::GetNumber("X resolution", 1080) / 2;
+  if (abs(distance - goal) > frc::SmartDashboard::GetNumber("aim tolerance", 25))
+  {
+    autonStep = autonStep++;
+    return;
+  }
+
+  if (distance > goal)
+  {
+    drivetrain.ArcadeDrive(0, motorSpeed, false);
+  }
+  else 
+  {
+    drivetrain.ArcadeDrive(0, motorSpeed * -1, false);
+  }
+  
+}
+
 double Robot::Deadzone(double amm){
     //deadzoneLimit is arbitrary
     //make it smartdashboard
@@ -231,12 +261,13 @@ void Robot::GetTeleopShuffleBoardValues()
 void Robot::GetRobotShuffleoardValues()
 {
   invertRobot = frc::SmartDashboard::GetBoolean("Invert Robot", false);
+  frc::SmartDashboard::PutNumber("aim tolerance", 40);
   //gearRatio = frc::SmartDashboard::GetNumber("GearRatio", gearRatio);
 }
 
 void Robot::Taxi() {
   if (autonStep == 1) {
-    Robot::LinearMove(-84.75, 0.5);
+    LinearMove(-84.75, 0.5);
 
   }
 }
@@ -263,10 +294,31 @@ void Robot::TestAuton() {
   return;
 }
 
+void Robot::BackupAndShootAuton() {
+  // std::cout << "gear ratio: " << std::to_string(gearRatio) << std::endl;
+  //drivetrain.TankDrive(0.3, 0.3, true);
+  
+  //std::printf("Basic move ton");
+  //autonStep = 1;
+  std::cout << "Basic Auton is running!" << std::endl;
+  switch(autonStep)
+  {
+    case 1:
+      //std::printf("In the switch");
+      //LinearMove(-84.75, 0.5);
+      autonStep = 2;
+      break;
+    case 2:
+      AimRobotAtHub(0.4);
+      break;
+    default:
+      break;
+  }
+  return;
+}
+
 void Robot::LinearMove(double distance, double motorSpeed)
 {
-  // std::printf("Distance: " + std::str(distance));
-  // std::printf("motor Speed: " + std::str(motorSpeed));
   assert (motorSpeed > 0);
   assert (distance != 0);
 
