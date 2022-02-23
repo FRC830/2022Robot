@@ -16,10 +16,10 @@ void Robot::RobotInit() {
     motorGroupRight.SetInverted(true) : 
     motorGroupRight.SetInverted(true);
 
-  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  // motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  // motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  // motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  // motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 }
 
 /*
@@ -35,6 +35,12 @@ void Robot::RobotPeriodic() {}
 
 
 void Robot::AutonomousInit() {
+
+  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
   firstCallToAuton = true;
   firstCallToAuton = true;
   autonMovingMotor = false;
@@ -109,19 +115,27 @@ void Robot::TeleopInit() {
   pilot.setSensitivity();
   pilot.setSensitivityLevel(defaultInputSensitivity);
 
-  if (ebrake)
-  {
+  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
-    motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  
-  }
   
 }
 
 void Robot::TeleopPeriodic() {
+  autoAligning = pilot.GetAButton();
+  if (autoAligning) {
+    //KEEP THESE TWO SEPERATE IF STATEMENTS!!! VERY IMPROTANT!!!
+    if (AimRobotAtHub(0.4)){
+      //rumble
+      pilot.SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 1);
+      pilot.SetRumble(frc::GenericHID::RumbleType::kRightRumble, 1);
+    }
+  }
+  else {
+    autoAligning = false;
+  }
   GetTeleopShuffleBoardValues();
   HandleDrivetrain();
 }
@@ -132,6 +146,12 @@ void Robot::DisabledInit() {
   autonMovingMotor = false;
   autonStep = 1;
   newAutonCall = true;
+
+  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+
 }
 
 void Robot::DisabledPeriodic() {}
@@ -160,9 +180,12 @@ void Robot::HandleDrivetrain() {
   //inputSentivityReduction = false;
   if (arcadeDrive)
   {
-    std::cout << "arcadeDrive" << std::endl;
     double turningSpeed = pilot.GetLeftX() * turningSensitivity;
     double forwardSpeed = pilot.GetRightY();
+    if (autoAligning)
+    {
+      turningSpeed = 0;
+    }
     drivetrain.ArcadeDrive(forwardSpeed, turningSpeed * -1, inputSentivityReduction);
   }
   else
@@ -187,20 +210,26 @@ void Robot::HandleDrivetrain() {
 
 }
 
-void Robot::AimRobotAtHub(double motorSpeed)
+bool Robot::AimRobotAtHub(double motorSpeed)
 {
-  double distance = frc::SmartDashboard::GetNumber("Hub Center X Distance", -1);
+  auto nttable = nt::NetworkTable();
+  double distance = nttableGetNumber("Hub Center X Distance", -1);
+  std::cout << std::to_string(distance) << std::endl;
   if (distance == -1)
   {
     std::cout << "No Hub Detected" << std::endl;
-    return;
+    return false;
+  }
+  else 
+  {
+    std::cout << "Hub Detected" << std::endl;
   }
   
   double goal = frc::SmartDashboard::GetNumber("X resolution", 1080) / 2;
   if (abs(distance - goal) > frc::SmartDashboard::GetNumber("aim tolerance", 25))
   {
     autonStep = autonStep++;
-    return;
+    return false;
   }
 
   if (distance > goal)

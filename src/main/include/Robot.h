@@ -55,7 +55,7 @@ class Robot : public frc::TimedRobot {
   //Auton functions... for auton...
   void LinearMove(double distance, double motorSpeed);
   void CenterPointTurn(double degrees, double motorSpeed);
-  void AimRobotAtHub(double moterSpeed);
+  bool AimRobotAtHub(double moterSpeed);
   void CompoundMove(double distance, double degrees, double motorSpeed);
   //Auton Comb...
   void Taxi();
@@ -143,5 +143,5 @@ class Robot : public frc::TimedRobot {
   double gearRatio =  20.0/3.0 * 3.0/2.0 * 30.0/29.0 * 30.0/29.5;
   double rotationAxisRadius = 13;
 
-  
+  bool autoAligning = false; 
 };
