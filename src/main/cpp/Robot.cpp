@@ -62,7 +62,7 @@ void Robot::AutonomousInit() {
   std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
 
   // look at suffleboard...
-  autonMode = frc::SmartDashboard::GetNumber("Auton Mode", 2);
+  autonMode = frc::SmartDashboard::GetNumber("Auton Mode", 1);
 
   firstCallToAuton = true;
 
@@ -212,8 +212,7 @@ void Robot::HandleDrivetrain() {
 
 bool Robot::AimRobotAtHub(double motorSpeed)
 {
-  auto nttable = nt::NetworkTable();
-  double distance = nttableGetNumber("Hub Center X Distance", -1);
+  double distance = visionTab -> GetNumber("Hub Center X Distance", -2);
   std::cout << std::to_string(distance) << std::endl;
   if (distance == -1)
   {
@@ -240,7 +239,7 @@ bool Robot::AimRobotAtHub(double motorSpeed)
   {
     drivetrain.ArcadeDrive(0, motorSpeed * -1, false);
   }
-  
+  return true;
 }
 
 double Robot::Deadzone(double amm){
