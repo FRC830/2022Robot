@@ -115,10 +115,15 @@ void Robot::TeleopInit() {
   pilot.setSensitivity();
   pilot.setSensitivityLevel(defaultInputSensitivity);
 
+  if (ebrake)
+  {
   motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+  }
+
 
   
 }
