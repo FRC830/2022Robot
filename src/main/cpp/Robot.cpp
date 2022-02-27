@@ -118,12 +118,20 @@ void Robot::HandleSolenoids() {
 }
 
 void Robot::HandleShooter(){
-  shooterMaximum = frc::SmartDashboard::PutNumber("Shooter Max percentage", 0.5);
-  shooter = copilot.GetRightTriggerAxis("noS")*shooterMaximum;
 
-  //this following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
-  shooter= shooterMaximum-Deadzone(shooterMaximum-shooter);
- flywheelMotor.Set(TalonFXControlMode::PercentOutput, shooter);
+  shooterOutput = copilot.GetRightTriggerAxis("noS")*shooterMaximum;
+  //Apply Ryan's confusing Deadzone math:
+  //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
+  shooterOutput = shooterMaximum-Deadzone(shooterMaximum-shooterOutput);
+  
+  leftFlywheelTalon.Set(TalonFXControlMode::PercentOutput, shooterOutput);
+  rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  backSpinTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  rightFlywheelTalon.SetInverted(true);
+  backSpinTalon.SetInverted(true);
+
+  shooterMaximum = frc::SmartDashboard::PutNumber("Shooter Max percentage", 0.5);
+  shooterOutput = frc::SmartDashboard::PutNumber("Shooter Output", 0);
 }
 
 //Replace the "0.8" with a changeable shuffleboard value 
@@ -158,6 +166,7 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutNumber("Deadzone Size", 0.05);
 
   frc::SmartDashboard::PutNumber("Shooter Max percentage", 0.5);
+  frc::SmartDashboard::PutNumber("Shooter Value", 0);
 }
 
 void Robot::GetTeleopShuffleBoardValues()

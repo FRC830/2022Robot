@@ -19,6 +19,8 @@
 #include <frc/Solenoid.h>
 #include <frc/DoubleSolenoid.h>
 #include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
+#include <ctre/phoenix/motorcontrol/can/TalonFX.h>
+#include <ctre/phoenix/motorcontrol/can/VictorSPX.h>
 
 
 #include <frc/shuffleboard/Shuffleboard.h>
@@ -56,9 +58,9 @@ class Robot : public frc::TimedRobot {
   Pins & IDs
   =============*/
 
-
-
-
+  /*
+  #1 Drivetrain
+  */
   // The line below is just an example, it does not contain the correct deviceID, may not contain
   // correct MotorType: Brushless
   rev::CANSparkMax motorFL = rev::CANSparkMax(1, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
@@ -66,20 +68,48 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax motorBL = rev::CANSparkMax(2, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
   rev::CANSparkMax motorBR = rev::CANSparkMax(4, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
 
-
-  TalonFX flywheelMotor = TalonFX(5);
-  //TalonFX flywheelFollowMotor = TalonFX(6):
-
   // Xbox controller object contruct, does not contain correct port, pilot goes in 0 copilot goes in 1
   ModifiableController pilot = ModifiableController(0);
   ModifiableController copilot = ModifiableController(1);
 
+  // Create motor controller groups
+  frc::MotorControllerGroup motorGroupLeft = frc::MotorControllerGroup(motorFL, motorBL);
+  frc::MotorControllerGroup motorGroupRight = frc::MotorControllerGroup(motorFR, motorBR);
+
+  // Pass motor controller groups to drivetrain object (also instantiate drivertrain object)
+  frc::DifferentialDrive drivetrain = frc::DifferentialDrive(motorGroupLeft, motorGroupRight);
+  
+  /*
+  #2 Intake
+  */
+
+  //Pnematic Initial Values
+  frc::DoubleSolenoid doubleSolenoid{frc::PneumaticsModuleType::CTREPCM, 1, 2};  
+
+  // Motors Needed to run the Intake (ids are arbritrary values we'll change later)
+  ctre::phoenix::motorcontrol::can::TalonSRX intakeTalon{3};
+  ctre::phoenix::motorcontrol::can::VictorSPX TopVictor{24}; //# is arbitrary put in device number later
+  ctre::phoenix::motorcontrol::can::VictorSPX BottomVictor{25}; //# is arbitrary put in device number later
+
+  /*
+  #3 Shooter
+  */
+  // Shooter Motor IDs
+  ctre::phoenix::motorcontrol::can::TalonFX leftFlywheelTalon {4};
+  ctre::phoenix::motorcontrol::can::TalonFX rightFlywheelTalon {9}; //Set as inverted and following leftFlywheelTalon
+  ctre::phoenix::motorcontrol::can::TalonFX backSpinTalon {5}; //Set as inverted and following leftFlywheelTalon
+  
+    
+
+  /*=============
+  Constant Values
+  =============*/
+
+  /*
+  #1 Drivetrain
+  */
+
   // Declare doubles to store joystick values
-  
-  // Copilot joystick values, not currently using these values
-  float shooterMaximum = 0.5;
- double shooter = 0;
-  
   // Whether inputs to TankDrive() should be squared (increases sensitivity of inputs at low speed)
 
   //MADE IT INIT
@@ -96,25 +126,10 @@ class Robot : public frc::TimedRobot {
 
   double turningSensitivity = 0.6;
 
-
-
-  // Create motor controller groups
-  frc::MotorControllerGroup motorGroupLeft = frc::MotorControllerGroup(motorFL, motorBL);
-  frc::MotorControllerGroup motorGroupRight = frc::MotorControllerGroup(motorFR, motorBR);
-
-  // Pass motor controller groups to drivetrain object (also instantiate drivertrain object)
-  frc::DifferentialDrive drivetrain = frc::DifferentialDrive(motorGroupLeft, motorGroupRight);
-  
-  // This is where we will put code for our motors and other sensors for the robot
-  // The motors that we will be using for the drivetrain are NEO motors, so work can begin here once the electrical board is finished
-
-  //Pnematic Initial Values
-
-  // The second and third arguements are the channels
-  frc::DoubleSolenoid doubleSolenoid{frc::PneumaticsModuleType::CTREPCM, 1, 2};  
-
-  // Talon Motors Needed to run the Intake ("3" is an arbritrary value we'll change later)
-
-  ctre::phoenix::motorcontrol::can::TalonSRX intakeTalon{3};
-
+  /*
+  #2 Shooter
+  */
+  // (Arbritrary) Joystick values for Copilot Shooter
+  float shooterMaximum = 0.5;
+  double shooterOutput = 0;
 };
