@@ -50,6 +50,7 @@ void Robot::TeleopPeriodic() {
   HandleDrivetrain();
   HandleShooter();
   HandleSolenoids();
+  HandleBallManagement();
 }
 
 void Robot::DisabledInit() {}
@@ -134,8 +135,28 @@ void Robot::HandleShooter(){
   shooterOutput = frc::SmartDashboard::PutNumber("Shooter Output", 0);
 }
 
-//Replace the "0.8" with a changeable shuffleboard value 
+void Robot::HandleBallManagement(){
+
+  // leftVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  // middleVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  // rightVictor.SetInverted(true);
+  // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+
+  ballManageOutput = copilot.GetLeftTriggerAxis("noS")*ballManageMaximum;
+  ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
+  
+  leftVictor.Set(VictorSPXControlMode::PercentOutput, ballManageOutput);
+  middleVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+  rightVictor.SetInverted(true);
+  rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+
+  ballManageMaximum = frc::SmartDashboard::PutNumber("Ball Management Max percentage", 0.5);
+  ballManageOutput = frc::SmartDashboard::PutNumber("Ball Managment Output", 0);
+
+}
+
 void Robot::HandleIntake(){
+  //Replace the "0.8" with a changeable shuffleboard value 
   if (copilot.GetRightTriggerAxis() > 0.8){
     
   }

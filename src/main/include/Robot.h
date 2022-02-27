@@ -50,6 +50,7 @@ class Robot : public frc::TimedRobot {
   void GetControllerInput();
   void HandleSolenoids();
   void HandleIntake();
+  void HandleBallManagement();
   double Deadzone(double pilotStickY);
   double Avg(double val1, double val2);
 
@@ -80,7 +81,7 @@ class Robot : public frc::TimedRobot {
   frc::DifferentialDrive drivetrain = frc::DifferentialDrive(motorGroupLeft, motorGroupRight);
   
   /*
-  #2 Intake
+  #2 Intake & Ball Management
   */
 
   //Pnematic Initial Values
@@ -88,13 +89,16 @@ class Robot : public frc::TimedRobot {
 
   // Motors Needed to run the Intake (ids are arbritrary values we'll change later)
   ctre::phoenix::motorcontrol::can::TalonSRX intakeTalon{3};
-  ctre::phoenix::motorcontrol::can::VictorSPX TopVictor{24}; //# is arbitrary put in device number later
-  ctre::phoenix::motorcontrol::can::VictorSPX BottomVictor{25}; //# is arbitrary put in device number later
+
+  // Motor for Ball Management (ids are arbritrary values we'll change later)
+  ctre::phoenix::motorcontrol::can::VictorSPX leftVictor{24}; //# is arbitrary put in device number later
+  ctre::phoenix::motorcontrol::can::VictorSPX middleVictor{25}; //# is arbitrary put in device number later
+  ctre::phoenix::motorcontrol::can::VictorSPX rightVictor{26}; //# is arbitrary put in device number later
 
   /*
   #3 Shooter
   */
-  // Shooter Motor IDs
+  // Shooter Motor IDs and ball managment
   ctre::phoenix::motorcontrol::can::TalonFX leftFlywheelTalon {4};
   ctre::phoenix::motorcontrol::can::TalonFX rightFlywheelTalon {9}; //Set as inverted and following leftFlywheelTalon
   ctre::phoenix::motorcontrol::can::TalonFX backSpinTalon {5}; //Set as inverted and following leftFlywheelTalon
@@ -129,7 +133,15 @@ class Robot : public frc::TimedRobot {
   /*
   #2 Shooter
   */
-  // (Arbritrary) Joystick values for Copilot Shooter
+  // (Arbritrary) Trigger values for Copilot Shooter
   float shooterMaximum = 0.5;
   double shooterOutput = 0;
+
+  /*
+  #3 Ball Management
+  */
+
+  float ballManageMaximum = 0.05;
+  double ballManageOutput = 0;
+ 
 };
