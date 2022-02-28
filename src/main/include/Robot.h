@@ -88,7 +88,7 @@ class Robot : public frc::TimedRobot {
   frc::DoubleSolenoid doubleSolenoid{frc::PneumaticsModuleType::CTREPCM, 1, 2};  
 
   // Motors Needed to run the Intake (ids are arbritrary values we'll change later)
-  ctre::phoenix::motorcontrol::can::TalonSRX intakeTalon{3};
+  ctre::phoenix::motorcontrol::can::VictorSPX intakeMotor{3};
 
   // Motor for Ball Management (ids are arbritrary values we'll change later)
   ctre::phoenix::motorcontrol::can::VictorSPX leftVictor{24}; //# is arbitrary put in device number later
