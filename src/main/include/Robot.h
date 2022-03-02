@@ -90,7 +90,7 @@ class Robot : public frc::TimedRobot {
   ModifiableController copilot = ModifiableController(1);
 
   nt::NetworkTableInstance networkTableInstance = nt::NetworkTableInstance::GetDefault();
-  std::shared_ptr<nt::NetworkTable> visionTab = networkTableInstance.GetTable("SmartDashboard")->GetSubTable("vision");
+  std::shared_ptr<nt::NetworkTable> visionTab = networkTableInstance.GetTable("Shuffleboard")->GetSubTable("vision");
 
 
   // Declare doubles to store joystick values

@@ -217,6 +217,7 @@ void Robot::HandleDrivetrain() {
 
 bool Robot::AimRobotAtHub(double motorSpeed)
 {
+  //tab stands for table
   double distance = visionTab -> GetNumber("Hub Center X Distance", -2);
   std::cout << std::to_string(distance) << std::endl;
   if (distance == -1)
@@ -232,7 +233,7 @@ bool Robot::AimRobotAtHub(double motorSpeed)
   double goal = frc::SmartDashboard::GetNumber("X resolution", 1080) / 2;
   if (abs(distance - goal) > frc::SmartDashboard::GetNumber("aim tolerance", 25))
   {
-    autonStep = autonStep++;
+    autonStep++;
     return false;
   }
 
