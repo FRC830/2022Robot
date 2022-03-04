@@ -132,9 +132,6 @@ void Robot::HandleShooter(){
   backSpinTalon.SetInverted(true);
 
   //Change this to be much much much much slower!!
-
-  shooterMaximum = frc::SmartDashboard::PutNumber("Shooter Max percentage", 0.5);
-  shooterOutput = frc::SmartDashboard::PutNumber("Shooter Output", 0);
 }
 
 void Robot::HandleBallManagement(){
@@ -144,7 +141,7 @@ void Robot::HandleBallManagement(){
   // rightVictor.SetInverted(true);
   // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
 
-  ballManageOutput = copilot.GetLeftTriggerAxis("noS")*ballManageMaximum;
+  ballManageOutput = ((copilot.GetLeftTriggerAxis("noS")*ballManageMaximum) > .9) ? 1 : 0;
   ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
   
   //Change this to be much much slower and also a boolean (since we only about two things: if the ball is being intaked or not)
@@ -154,8 +151,6 @@ void Robot::HandleBallManagement(){
   rightVictor.SetInverted(true);
   rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
 
-  ballManageMaximum = frc::SmartDashboard::PutNumber("Ball Management Max percentage", 0.5);
-  ballManageOutput = frc::SmartDashboard::PutNumber("Ball Managment Output", 0);
 
 }
 
@@ -192,6 +187,13 @@ void Robot::PlaceShuffleboardTiles()
 
   frc::SmartDashboard::PutNumber("Shooter Max percentage", 0.5);
   frc::SmartDashboard::PutNumber("Shooter Value", 0);
+  
+  frc::SmartDashboard::PutNumber("Shooter Maximum", 0);
+  frc::SmartDashboard::PutNumber("Shooter Output", 0);
+  frc::SmartDashboard::PutNumber("Ball Management Output", 0);
+  frc::SmartDashboard::PutNumber("Ball Management Maximum", 0);
+
+  
 }
 
 void Robot::GetTeleopShuffleBoardValues()
@@ -202,6 +204,11 @@ void Robot::GetTeleopShuffleBoardValues()
   defaultInputSensitivity = frc::SmartDashboard::GetNumber("Input Sensitivity", 0.4);
   turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.6);
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
+
+  shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 0);
+  shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
+  ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
+  shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum", 0);
 }
 
 
