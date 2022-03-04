@@ -48,7 +48,6 @@ class Robot : public frc::TimedRobot {
   void PlaceShuffleboardTiles();
   void GetTeleopShuffleBoardValues();
   void GetControllerInput();
-  void HandleSolenoids();
   void HandleIntake();
   void HandleBallManagement();
   double Deadzone(double pilotStickY);
@@ -85,7 +84,7 @@ class Robot : public frc::TimedRobot {
   */
 
   //Pnematic Initial Values
-  frc::DoubleSolenoid doubleSolenoid{frc::PneumaticsModuleType::CTREPCM, 1, 2};  
+  frc::DoubleSolenoid doubleSolenoid{frc::PneumaticsModuleType::CTREPCM, 0, 1};  
 
   // Motors Needed to run the Intake (ids are arbritrary values we'll change later)
   ctre::phoenix::motorcontrol::can::VictorSPX intakeMotor{3};
@@ -143,5 +142,9 @@ class Robot : public frc::TimedRobot {
 
   float ballManageMaximum = 0.05;
   double ballManageOutput = 0;
- 
+
+  /*
+  #4 Intake
+  */
+  bool intakeExtended = false;
 };
