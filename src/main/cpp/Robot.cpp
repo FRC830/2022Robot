@@ -49,7 +49,6 @@ void Robot::TeleopPeriodic() {
   GetTeleopShuffleBoardValues();
   HandleDrivetrain();
   HandleShooter();
-  HandleSolenoids();
   HandleBallManagement();
 }
 
@@ -107,17 +106,6 @@ void Robot::HandleDrivetrain() {
   }
 }
 
-
-void Robot::HandleSolenoids() {
-  if (copilot.GetBButton() == 1){
-    doubleSolenoid.Set(frc::DoubleSolenoid::kForward);
-  }
-  else{
-    doubleSolenoid.Set(frc::DoubleSolenoid::kReverse);
-  }
-
-}
-
 void Robot::HandleShooter(){
 
   shooterOutput = copilot.GetRightTriggerAxis("noS")*shooterMaximum;
@@ -156,9 +144,18 @@ void Robot::HandleBallManagement(){
 
 void Robot::HandleIntake(){
   //Replace the "0.8" with a changeable shuffleboard value 
-  if (copilot.GetRightTriggerAxis() > 0.8){
+  // if (copilot.GetRightTriggerAxis() > 0.8){
     
+  // }
+
+ if (copilot.GetBButton() == 1){
+    doubleSolenoid.Set(frc::DoubleSolenoid::kForward);
   }
+  else{
+    doubleSolenoid.Set(frc::DoubleSolenoid::kReverse);
+  }
+
+  intakeExtended = frc::SmartDashboard::PutBoolean("Intake Extended", false);
 }
 
 double Robot::Deadzone(double amm){
