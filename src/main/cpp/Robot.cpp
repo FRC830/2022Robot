@@ -10,7 +10,6 @@ using namespace std;
 
 void Robot::RobotInit() {
   PlaceShuffleboardTiles();
-  //flywheelFollowMotor.Set(TalonFXControlMode::Follower, 5);
 }
 
 /*
@@ -50,6 +49,7 @@ void Robot::TeleopPeriodic() {
   HandleDrivetrain();
   HandleShooter();
   HandleBallManagement();
+  HandleIntake();
 }
 
 void Robot::DisabledInit() {}
@@ -63,7 +63,6 @@ void Robot::TestPeriodic() {}
 
 void Robot::HandleDrivetrain() {
   
-
   if (pilot.GetRightStickButtonPressed())
   {
     pilot.setSensitivityLevel(driftInputSensitivity);
@@ -74,8 +73,6 @@ void Robot::HandleDrivetrain() {
     pilot.setSensitivityLevel(defaultInputSensitivity);
   }
 
-  
- 
 
   //inputSentivityReduction = false;
   if (arcadeDrive)
@@ -92,7 +89,6 @@ void Robot::HandleDrivetrain() {
     // if the values are close, average them
     if (abs(pilot.GetLeftY() - pilot.GetRightY()) < tankAssist)
     {
-      
       //if we are using tank drive and the sticks are pretty close together, pretend that they are all the way togetehr
       double AveragePosition = Robot::Avg(pilot.GetLeftY(), pilot.GetRightY());
       //set the right stick equal to the left stick so that they are equal
@@ -138,31 +134,29 @@ void Robot::HandleBallManagement(){
               (abs(rightFlywheelTalon.GetClosedLoopError() < 50))) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
   //ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
   
-  //Change this to be much much slower and also a boolean (since we only about two things: if the ball is being intaked or not)
-
-  leftVictor.Set(VictorSPXControlMode::PercentOutput, ballManageOutput);
-  middleVictor.Set(VictorSPXControlMode::PercentOutput, -ballManageOutput);
+  leftVictor.Set(VictorSPXControlMode::Velocity, ballManageOutput);
+  middleVictor.Set(VictorSPXControlMode::Velocity, -ballManageOutput);
   rightVictor.SetInverted(true);
   rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
-
-  
-
 }
 
 void Robot::HandleIntake(){
-  //Replace the "0.8" with a changeable shuffleboard value 
-  // if (copilot.GetRightTriggerAxis() > 0.8){
-    
-  // }
 
- if (copilot.GetBButton() == 1){
-    doubleSolenoid.Set(frc::DoubleSolenoid::kForward);
+  bool isIntaking = pilot.GetLeftTriggerAxis() > 0.2;
+  intakeOutput = int(isIntaking) * intakeMaximum;
+  intakeMotor.Set(VictorSPXControlMode::PercentOutput, -intakeOutput);
+  frc::SmartDashboard::PutNumber("Intake Output", intakeOutput);
+
+ if (isIntaking){
+    leftSolenoid.Set(true);
+    rightSolenoid.Set(true);
+    frc::SmartDashboard::PutBoolean("Intake Extended", true);
   }
   else{
-    doubleSolenoid.Set(frc::DoubleSolenoid::kReverse);
+    leftSolenoid.Set(false);
+    rightSolenoid.Set(false);
+    frc::SmartDashboard::PutBoolean("Intake Extended", false);
   }
-
-  intakeExtended = frc::SmartDashboard::PutBoolean("Intake Extended", false);
 }
 
 double Robot::Deadzone(double amm){
@@ -183,27 +177,26 @@ double Robot::Avg(double val1, double val2)
 
 void Robot::PlaceShuffleboardTiles()
 {
+  //Initially place values to Shuffleboard
   frc::SmartDashboard::PutBoolean("Arcade Drive", true);
   frc::SmartDashboard::PutNumber("Tank Assist", 0.05);
   frc::SmartDashboard::PutNumber("Input Sensitivity", 0.4);
   frc::SmartDashboard::PutNumber("Turning Sensitivity", 0.6);
   frc::SmartDashboard::PutNumber("Deadzone Size", 0.05);
-
-  frc::SmartDashboard::PutNumber("Shooter Max percentage", 0.5);
-  frc::SmartDashboard::PutNumber("Shooter Value", 0);
   
   frc::SmartDashboard::PutNumber("Shooter Maximum", 13000);
   frc::SmartDashboard::PutNumber("Shooter Output", 0);
   frc::SmartDashboard::PutNumber("ratio backspin to flywheel",2.0/3.0);
   frc::SmartDashboard::PutNumber("Ball Management Output", 0);
-  frc::SmartDashboard::PutNumber("Ball Management Maximum", 0.5);
-
-  
+  frc::SmartDashboard::PutNumber("Ball Management Maximum", 0.5);  
+  frc::SmartDashboard::PutNumber("Intake Maximum", 0.5);
+  frc::SmartDashboard::PutNumber("Intake Output", 0);
+  frc::SmartDashboard::PutBoolean("Intake Extended", false);
 }
 
 void Robot::GetTeleopShuffleBoardValues()
 {
-  //collect values from shuffleboard
+  //Collect values from Shuffleboard
   arcadeDrive = frc::SmartDashboard::GetBoolean("Arcade Drive", true);
   tankAssist = frc::SmartDashboard::GetNumber("Tank Assist", 0.08);
   defaultInputSensitivity = frc::SmartDashboard::GetNumber("Input Sensitivity", 0.4);
@@ -214,6 +207,9 @@ void Robot::GetTeleopShuffleBoardValues()
   shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
   ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
   shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum",0.5);
+  intakeOutput = frc::SmartDashboard::GetNumber("Intake Output", 0);
+  intakeMaximum = frc::SmartDashboard::GetNumber("Intake Maximum", 0.5);
+  intakeExtended = frc::SmartDashboard::GetBoolean("Intake Extended", false);
 }
 
 
