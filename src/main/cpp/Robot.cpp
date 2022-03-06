@@ -119,6 +119,8 @@ void Robot::HandleShooter(){
   rightFlywheelTalon.SetInverted(true);
   backSpinTalon.SetInverted(true);
 
+  std::cout << std::to_string(leftFlywheelTalon.GetSelectedSensorVelocity()) << std::endl;
+
   //Change this to be much much much much slower!!
 }
 
@@ -129,7 +131,7 @@ void Robot::HandleBallManagement(){
   // rightVictor.SetInverted(true);
   // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
 
-  ballManageOutput = ((copilot.GetLeftTriggerAxis("noS")*ballManageMaximum) > .9) ? 1 : 0;
+  ballManageOutput = copilot.GetAButton() ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0) : 0;
   ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
   
   //Change this to be much much slower and also a boolean (since we only about two things: if the ball is being intaked or not)
@@ -139,6 +141,7 @@ void Robot::HandleBallManagement(){
   rightVictor.SetInverted(true);
   rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
 
+  
 
 }
 
