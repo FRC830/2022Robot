@@ -90,9 +90,9 @@ class Robot : public frc::TimedRobot {
   ctre::phoenix::motorcontrol::can::VictorSPX intakeMotor{3};
 
   // Motor for Ball Management (ids are arbritrary values we'll change later)
-  ctre::phoenix::motorcontrol::can::VictorSPX leftVictor{24}; //# is arbitrary put in device number later
-  ctre::phoenix::motorcontrol::can::VictorSPX middleVictor{25}; //# is arbitrary put in device number later
-  ctre::phoenix::motorcontrol::can::VictorSPX rightVictor{26}; //# is arbitrary put in device number later
+  ctre::phoenix::motorcontrol::can::VictorSPX leftVictor{24}; //ids for Vitors are correct
+  ctre::phoenix::motorcontrol::can::VictorSPX middleVictor{25}; 
+  ctre::phoenix::motorcontrol::can::VictorSPX rightVictor{26}; 
 
   /*
   #3 Shooter
@@ -146,5 +146,8 @@ class Robot : public frc::TimedRobot {
   /*
   #4 Intake
   */
+
   bool intakeExtended = false;
+  float intakeMaximum = 0.05;
+  double intakeOutput = 0;
 };

@@ -50,6 +50,7 @@ void Robot::TeleopPeriodic() {
   HandleDrivetrain();
   HandleShooter();
   HandleBallManagement();
+  HandleIntake();
 }
 
 void Robot::DisabledInit() {}
@@ -113,7 +114,7 @@ void Robot::HandleShooter(){
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
   shooterOutput = shooterMaximum-Deadzone(shooterMaximum-shooterOutput);
   
-  leftFlywheelTalon.Set(TalonFXControlMode::PercentOutput, shooterOutput);
+  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, shooterOutput);
   rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
   backSpinTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
   rightFlywheelTalon.SetInverted(true);
@@ -134,8 +135,8 @@ void Robot::HandleBallManagement(){
   
   //Change this to be much much slower and also a boolean (since we only about two things: if the ball is being intaked or not)
 
-  leftVictor.Set(VictorSPXControlMode::PercentOutput, ballManageOutput);
-  middleVictor.Set(VictorSPXControlMode::PercentOutput, -ballManageOutput);
+  leftVictor.Set(VictorSPXControlMode::Velocity, ballManageOutput);
+  middleVictor.Set(VictorSPXControlMode::Velocity, -ballManageOutput);
   rightVictor.SetInverted(true);
   rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
 
@@ -145,17 +146,24 @@ void Robot::HandleBallManagement(){
 void Robot::HandleIntake(){
   //Replace the "0.8" with a changeable shuffleboard value 
   // if (copilot.GetRightTriggerAxis() > 0.8){
-    
+    //
   // }
 
- if (copilot.GetBButton() == 1){
+  intakeOutput = copilot.GetBButton() * intakeMaximum;
+
+ if (copilot.GetBButton()){
     doubleSolenoid.Set(frc::DoubleSolenoid::kForward);
+    frc::SmartDashboard::PutBoolean("Intake Extended", true);
+    intakeMotor.Set(VictorSPXControlMode::Velocity, intakeOutput);
   }
   else{
     doubleSolenoid.Set(frc::DoubleSolenoid::kReverse);
+    frc::SmartDashboard::PutBoolean("Intake Extended", false);
+    intakeMotor.Set(VictorSPXControlMode::Velocity, 0);
   }
 
-  intakeExtended = frc::SmartDashboard::PutBoolean("Intake Extended", false);
+
+
 }
 
 double Robot::Deadzone(double amm){
@@ -190,6 +198,8 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutNumber("Ball Management Output", 0);
   frc::SmartDashboard::PutNumber("Ball Management Maximum", 0);
 
+  frc::SmartDashboard::PutBoolean("Intake Extended", false);
+
   
 }
 
@@ -206,6 +216,8 @@ void Robot::GetTeleopShuffleBoardValues()
   shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
   ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
   shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum", 0);
+
+  intakeExtended = frc::SmartDashboard::GetBoolean("Intake Extended", false);
 }
 
 
