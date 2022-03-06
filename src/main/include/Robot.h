@@ -84,7 +84,8 @@ class Robot : public frc::TimedRobot {
   */
 
   //Pnematic Initial Values
-  frc::DoubleSolenoid doubleSolenoid{frc::PneumaticsModuleType::CTREPCM, 0, 1};  
+  frc::Solenoid leftSolenoid{frc::PneumaticsModuleType::CTREPCM, 0};
+  frc::Solenoid rightSolenoid{frc::PneumaticsModuleType::CTREPCM, 1};
 
   // Motors Needed to run the Intake (ids are arbritrary values we'll change later)
   ctre::phoenix::motorcontrol::can::VictorSPX intakeMotor{3};
@@ -148,6 +149,6 @@ class Robot : public frc::TimedRobot {
   */
 
   bool intakeExtended = false;
-  float intakeMaximum = 0.05;
+  float intakeMaximum = 1.0;
   double intakeOutput = 0;
 };
