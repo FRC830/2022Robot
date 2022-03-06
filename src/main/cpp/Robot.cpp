@@ -107,19 +107,20 @@ void Robot::HandleDrivetrain() {
 }
 
 void Robot::HandleShooter(){
-
+  double ratio = frc::SmartDashboard::GetNumber("ratio backspin to flywheel",2.0/3.0);
   shooterOutput = copilot.GetRightTriggerAxis("noS")*shooterMaximum;
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
   shooterOutput = shooterMaximum-Deadzone(shooterMaximum-shooterOutput);
   
-  leftFlywheelTalon.Set(TalonFXControlMode::PercentOutput, shooterOutput);
+  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, shooterOutput);
   rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-  backSpinTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput*ratio);
   rightFlywheelTalon.SetInverted(true);
   backSpinTalon.SetInverted(true);
 
-  std::cout << std::to_string(leftFlywheelTalon.GetSelectedSensorVelocity()) << std::endl;
+  std::cout << std::to_string(leftFlywheelTalon.GetClosedLoopError()) << std::endl;
+
 
   //Change this to be much much much much slower!!
 }
@@ -131,8 +132,11 @@ void Robot::HandleBallManagement(){
   // rightVictor.SetInverted(true);
   // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
 
-  ballManageOutput = copilot.GetAButton() ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0) : 0;
-  ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
+  ballManageOutput = (copilot.GetAButton() && 
+              copilot.GetRightTriggerAxis() && 
+              (abs(leftFlywheelTalon.GetClosedLoopError() < 50)) &&
+              (abs(rightFlywheelTalon.GetClosedLoopError() < 50))) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+  //ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
   
   //Change this to be much much slower and also a boolean (since we only about two things: if the ball is being intaked or not)
 
@@ -188,10 +192,11 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutNumber("Shooter Max percentage", 0.5);
   frc::SmartDashboard::PutNumber("Shooter Value", 0);
   
-  frc::SmartDashboard::PutNumber("Shooter Maximum", 0);
+  frc::SmartDashboard::PutNumber("Shooter Maximum", 13000);
   frc::SmartDashboard::PutNumber("Shooter Output", 0);
+  frc::SmartDashboard::PutNumber("ratio backspin to flywheel",2.0/3.0);
   frc::SmartDashboard::PutNumber("Ball Management Output", 0);
-  frc::SmartDashboard::PutNumber("Ball Management Maximum", 0);
+  frc::SmartDashboard::PutNumber("Ball Management Maximum", 0.5);
 
   
 }
@@ -205,10 +210,10 @@ void Robot::GetTeleopShuffleBoardValues()
   turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.6);
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 
-  shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 0);
+  shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 13000);
   shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
   ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
-  shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum", 0);
+  shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum",0.5);
 }
 
 
