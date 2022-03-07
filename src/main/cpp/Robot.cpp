@@ -128,14 +128,11 @@ void Robot::HandleBallManagement(){
   // rightVictor.SetInverted(true);
   // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
 
-  ballManageOutput = (copilot.GetAButton() && 
-              copilot.GetRightTriggerAxis() && 
-              (abs(leftFlywheelTalon.GetClosedLoopError() < 50)) &&
-              (abs(rightFlywheelTalon.GetClosedLoopError() < 50))) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+  ballManageOutput = (copilot.GetAButton()) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
   //ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
   
-  leftVictor.Set(VictorSPXControlMode::Velocity, ballManageOutput);
-  middleVictor.Set(VictorSPXControlMode::Velocity, -ballManageOutput);
+  leftVictor.Set(VictorSPXControlMode::PercentOutput, ballManageOutput);
+  middleVictor.Set(VictorSPXControlMode::PercentOutput, -ballManageOutput);
   rightVictor.SetInverted(true);
   rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
 }
