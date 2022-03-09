@@ -129,6 +129,8 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
+  GetTeleopShuffleBoardValues();
+
   autoAligning = pilot.GetAButton();
   if (autoAligning) {
     //KEEP THESE TWO SEPERATE IF STATEMENTS!!! VERY IMPROTANT!!!
@@ -141,7 +143,7 @@ void Robot::TeleopPeriodic() {
   else {
     autoAligning = false;
   }
-  GetTeleopShuffleBoardValues();
+  
   HandleDrivetrain();
   HandleShooter();
   HandleBallManagement();
@@ -402,6 +404,14 @@ void Robot::GetTeleopShuffleBoardValues()
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 
   ebrake = frc::SmartDashboard::GetNumber("Ebrake", true);
+
+  shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 13000);
+  shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
+  ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
+  shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum",0.5);
+  intakeOutput = frc::SmartDashboard::GetNumber("Intake Output", 0);
+  intakeMaximum = frc::SmartDashboard::GetNumber("Intake Maximum", 0.5);
+  intakeExtended = frc::SmartDashboard::GetBoolean("Intake Extended", false);
   
 }
 
@@ -626,14 +636,6 @@ double Robot::DegreesToInches(double degrees)
   double RobotC = rotationAxisRadius * PI * 2;
   double radialPortion = degrees / 360;
   return (RobotC * radialPortion);
-
-  shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 13000);
-  shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
-  ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
-  shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum",0.5);
-  intakeOutput = frc::SmartDashboard::GetNumber("Intake Output", 0);
-  intakeMaximum = frc::SmartDashboard::GetNumber("Intake Maximum", 0.5);
-  intakeExtended = frc::SmartDashboard::GetBoolean("Intake Extended", false);
 }
 
 
