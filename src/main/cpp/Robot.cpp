@@ -62,7 +62,7 @@ void Robot::AutonomousInit() {
   std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
 
   // look at suffleboard...
-  autonMode = frc::SmartDashboard::GetNumber("Auton Mode", 1);
+  autonMode = frc::SmartDashboard::GetNumber("Auton Mode", 2);
 
   firstCallToAuton = true;
 
@@ -453,7 +453,7 @@ void Robot::BackupAndShootAuton() {
     case 1:
       //std::printf("In the switch");
       //LinearMove(-84.75, 0.5);
-      autonStep = 2;
+      LinearMove(-84.75, 0.5);
       break;
     case 2:
       AccelerateFlywheelDuringAuton(11500, 0.6);
