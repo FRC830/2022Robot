@@ -77,7 +77,6 @@ void Robot::HandleDrivetrain() {
   //inputSentivityReduction = false;
   if (arcadeDrive)
   {
-    std::cout << "arcadeDrive" << std::endl;
     double turningSpeed = pilot.GetLeftX() * -1 * turningSensitivity;
     double forwardSpeed = pilot.GetRightY() * -1;
     drivetrain.ArcadeDrive(turningSpeed, forwardSpeed, inputSentivityReduction);
@@ -104,7 +103,7 @@ void Robot::HandleDrivetrain() {
 
 void Robot::HandleShooter(){
   double ratio = frc::SmartDashboard::GetNumber("ratio backspin to flywheel",2.0/3.0);
-  shooterOutput = copilot.GetRightTriggerAxis("noS")*shooterMaximum;
+  shooterOutput = (copilot.GetRightTriggerAxis("noS") > 0.6) ? shooterMaximum : 0;
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
   shooterOutput = shooterMaximum-Deadzone(shooterMaximum-shooterOutput);
@@ -115,7 +114,7 @@ void Robot::HandleShooter(){
   rightFlywheelTalon.SetInverted(true);
   backSpinTalon.SetInverted(true);
 
-  std::cout << std::to_string(leftFlywheelTalon.GetClosedLoopError()) << std::endl;
+  frc::SmartDashboard::PutNumber("closed loop error", leftFlywheelTalon.GetClosedLoopError());
 
 
   //Change this to be much much much much slower!!
@@ -128,13 +127,36 @@ void Robot::HandleBallManagement(){
   // rightVictor.SetInverted(true);
   // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
 
-  ballManageOutput = (copilot.GetAButton()) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
-  //ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
+  ballManageOutput = (copilot.GetAButton() && abs(leftFlywheelTalon.GetClosedLoopError() < 50)) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+  bool ballManageReverse = copilot.GetBButton();
   
-  leftVictor.Set(VictorSPXControlMode::PercentOutput, ballManageOutput);
-  middleVictor.Set(VictorSPXControlMode::PercentOutput, -ballManageOutput);
-  rightVictor.SetInverted(true);
-  rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+  //ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
+
+  if (ballManageOutput > 0)
+  {
+    leftVictor.Set(VictorSPXControlMode::PercentOutput, ballManageOutput);
+    middleVictor.Set(VictorSPXControlMode::PercentOutput, -ballManageOutput);
+    rightVictor.SetInverted(true);
+    rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+    ballManageReverse = false;
+  }
+  else if (ballManageReverse)
+  {
+    leftVictor.Set(VictorSPXControlMode::PercentOutput, -1 * frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5));
+    middleVictor.Set(VictorSPXControlMode::PercentOutput, frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5));
+    rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+  }
+  else
+  {
+    leftVictor.Set(VictorSPXControlMode::PercentOutput, 0);
+    middleVictor.Set(VictorSPXControlMode::PercentOutput, 0);
+    rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+  }
+
+  if (pilot.GetAButtonPressed())
+  {
+    frc::SmartDashboard::PutNumber("\nerror at shoot: ", leftFlywheelTalon.GetClosedLoopError());
+  }
 }
 
 void Robot::HandleIntake(){
@@ -197,7 +219,7 @@ void Robot::GetTeleopShuffleBoardValues()
   arcadeDrive = frc::SmartDashboard::GetBoolean("Arcade Drive", true);
   tankAssist = frc::SmartDashboard::GetNumber("Tank Assist", 0.08);
   defaultInputSensitivity = frc::SmartDashboard::GetNumber("Input Sensitivity", 0.4);
-  turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.6);
+  turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.8);
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 
   shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 13000);
