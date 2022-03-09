@@ -67,6 +67,8 @@ class Robot : public frc::TimedRobot {
   void CenterPointTurn(double degrees, double motorSpeed);
   bool AimRobotAtHub(double moterSpeed);
   void CompoundMove(double distance, double degrees, double motorSpeed);
+  void AccelerateFlywheelDuringAuton(int speed, double ratio);
+  void RunBallManagement(double speed);
   //Auton Comb...
   void Taxi();
   void BackupAndShootAuton();

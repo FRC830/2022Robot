@@ -456,7 +456,10 @@ void Robot::BackupAndShootAuton() {
       autonStep = 2;
       break;
     case 2:
-      AimRobotAtHub(0.4);
+      AccelerateFlywheelDuringAuton(11500, 0.6);
+      break;
+    case 3:
+      RunBallManagement(0.5);
       break;
     default:
       break;
@@ -464,6 +467,27 @@ void Robot::BackupAndShootAuton() {
   return;
 }
 
+void Robot::AccelerateFlywheelDuringAuton(int speed, double ratio)
+{
+  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, speed);
+  rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  backSpinTalon.Set(TalonFXControlMode::Velocity, speed * ratio);
+  rightFlywheelTalon.SetInverted(true);
+  backSpinTalon.SetInverted(true);
+
+  if (abs(leftFlywheelTalon.GetClosedLoopError()) < 100)
+  {
+    autonStep++;
+  }
+}
+
+void Robot::RunBallManagement(double speed)
+{
+  leftVictor.Set(VictorSPXControlMode::PercentOutput, speed);
+  middleVictor.Set(VictorSPXControlMode::PercentOutput, -speed);
+  rightVictor.SetInverted(true);
+  rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+}
 void Robot::LinearMove(double distance, double motorSpeed)
 {
   assert (motorSpeed > 0);
