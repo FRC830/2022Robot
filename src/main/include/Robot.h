@@ -73,11 +73,11 @@ class Robot : public frc::TimedRobot {
   void TestAuton();
 
 
-  map<int, double> ratioMap = {{60, 0.8},
+  std::map<int, double> ratioMap = {{60, 0.8},
                                      {90, 0.6},
                                      {180, 0.6},
                                      {270, 0.6}};
-  map<int, double> speedMap = {{60, 8750},
+  std::map<int, double> speedMap = {{60, 8750},
                                      {90, 11500},
                                      {180, 12500},
                                      {270, 14800}};
@@ -194,8 +194,6 @@ class Robot : public frc::TimedRobot {
   float ballManageMaximum = 0.05;
   double ballManageOutput = 0;
 
-  // Pass motor controller groups to drivetrain object (also instantiate drivertrain object)
-  frc::DifferentialDrive drivetrain = frc::DifferentialDrive(motorGroupLeft, motorGroupRight);
   
   // This is where we will put code for our motors and other sensors for the robot
   // The motors that we will be using for the drivetrain are NEO motors, so work can begin here once the electrical board is finished
