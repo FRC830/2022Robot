@@ -142,7 +142,7 @@ void Robot::HandleBallManagement(){
   }
   else if (ballManageReverse)
   {
-    leftVictor.Set(VictorSPXControlMode::PercentOutput, -1 * frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5));
+    leftVictor.Set(VictorSPXControlMode::PercentOutput, -1 * frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) );
     middleVictor.Set(VictorSPXControlMode::PercentOutput, frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5));
     rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
   }
@@ -219,7 +219,7 @@ void Robot::GetTeleopShuffleBoardValues()
   arcadeDrive = frc::SmartDashboard::GetBoolean("Arcade Drive", true);
   tankAssist = frc::SmartDashboard::GetNumber("Tank Assist", 0.08);
   defaultInputSensitivity = frc::SmartDashboard::GetNumber("Input Sensitivity", 0.4);
-  turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.8);
+  turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.6);
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 
   shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 13000);
