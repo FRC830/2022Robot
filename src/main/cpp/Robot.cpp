@@ -102,7 +102,31 @@ void Robot::HandleDrivetrain() {
 }
 
 void Robot::HandleShooter(){
+  int dist = frc::SmartDashboard::GetNumber("Shuffleboard/vision/distance",180);
   double ratio = frc::SmartDashboard::GetNumber("ratio backspin to flywheel",2.0/3.0);
+  
+  //index is the index of the distance data point right above, -1 if its above everything
+  int index=-1;
+  for(int i =0; i< distances.size(); i++){
+    if (dist<distances[i]){
+      index=i;
+      break;
+    }
+
+  }
+  if(index !=-1 && index ==0){
+    int indexabove=index;
+    int indexbelow=index;
+
+    double proportionBetweenDistancePoints=(dist-distances[indexbelow])/(distances[indexabove]-distances[indexbelow]);
+    double targetRatio=((ratioMap[distances[indexabove]] - ratioMap[distances[indexbelow]])*proportionBetweenDistancePoints)+ratioMap[distances[indexbelow]];
+    ratio=targetRatio;
+
+    double targetSpeed=((speedMap[distances[indexabove]] - speedMap[distances[indexbelow]])*proportionBetweenDistancePoints)+speedMap[distances[indexbelow]];
+    shooterMaximum=targetSpeed;
+  }
+  
+
   shooterOutput = (copilot.GetRightTriggerAxis("noS") > 0.6) ? shooterMaximum : 0;
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)

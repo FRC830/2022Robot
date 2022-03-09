@@ -52,7 +52,22 @@ class Robot : public frc::TimedRobot {
   void HandleBallManagement();
   double Deadzone(double pilotStickY);
   double Avg(double val1, double val2);
+  map<int, double> ratioMap = {{60, 0.8},
+                                     {90, 0.6},
+                                     {180, 0.6},
+                                     {270, 0.6}};
+  map<int, double> speedMap = {{60, 8750},
+                                     {90, 11500},
+                                     {180, 12500},
+                                     {270, 14800}};
 
+  std::array<int, 4> distances =
+  {
+    60,
+    90,
+    180,
+    270
+  };
 
   /*=============
   Pins & IDs
