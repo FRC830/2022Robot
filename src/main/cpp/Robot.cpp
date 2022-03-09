@@ -170,16 +170,20 @@ void Robot::TestPeriodic() {}
 
 
 void Robot::HandleDrivetrain() {
-  
-  if (pilot.GetRightStickButtonPressed())
-  {
-    pilot.setSensitivityLevel(driftInputSensitivity);
+  //original input sensitivity code + turbo. Uncomment if needed
+  // if (pilot.GetRightStickButtonPressed())
+  // {
+  //   pilot.setSensitivityLevel(driftInputSensitivity);
 
-  }
-  else if (pilot.GetRightStickButtonReleased())
-  {
-    pilot.setSensitivityLevel(defaultInputSensitivity);
-  }
+  // }
+  // else if (pilot.GetRightStickButtonReleased())
+  // {
+  //   pilot.setSensitivityLevel(defaultInputSensitivity);
+  // }
+
+
+  //new, more advanced input sensitivity. Revert to old version if this does not work.
+  pilot.setSensitivityLevel(defaultInputSensitivity + (((pilot.GetRightTriggerAxis("noS") < 0.9) ? pilot.GetRightTriggerAxis("noS") : 1)  * (1 - defaultInputSensitivity)));
 
 
   //inputSentivityReduction = false;
@@ -246,7 +250,7 @@ void Robot::HandleShooter(){
   
   leftFlywheelTalon.Set(TalonFXControlMode::Velocity, shooterOutput);
   rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-  backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput*ratio);
+  backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput * ratio);
   rightFlywheelTalon.SetInverted(true);
   backSpinTalon.SetInverted(true);
 
