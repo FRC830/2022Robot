@@ -143,6 +143,9 @@ void Robot::TeleopPeriodic() {
   }
   GetTeleopShuffleBoardValues();
   HandleDrivetrain();
+  HandleShooter();
+  HandleBallManagement();
+  HandleIntake();
 }
 
 void Robot::DisabledInit() {
@@ -168,7 +171,6 @@ void Robot::TestPeriodic() {}
 
 void Robot::HandleDrivetrain() {
   
-
   if (pilot.GetRightStickButtonPressed())
   {
     pilot.setSensitivityLevel(driftInputSensitivity);
@@ -179,8 +181,6 @@ void Robot::HandleDrivetrain() {
     pilot.setSensitivityLevel(defaultInputSensitivity);
   }
 
-  
- 
 
   //inputSentivityReduction = false;
   if (arcadeDrive)
@@ -200,7 +200,6 @@ void Robot::HandleDrivetrain() {
     // if the values are close, average them
     if (abs(pilot.GetLeftY() - pilot.GetRightY()) < tankAssist)
     {
-      
       //if we are using tank drive and the sticks are pretty close together, pretend that they are all the way togetehr
       double AveragePosition = Robot::Avg(pilot.GetLeftY(), pilot.GetRightY());
       //set the right stick equal to the left stick so that they are equal
@@ -212,7 +211,107 @@ void Robot::HandleDrivetrain() {
       drivetrain.TankDrive(pilot.GetLeftY(), pilot.GetRightY(), inputSentivityReduction);
     }
   }
+}
 
+void Robot::HandleShooter(){
+  int dist = frc::SmartDashboard::GetNumber("Shuffleboard/vision/distance",180);
+  double ratio = frc::SmartDashboard::GetNumber("ratio backspin to flywheel",2.0/3.0);
+  
+  //index is the index of the distance data point right above, -1 if its above everything
+  int index=-1;
+  for(int i =0; i< distances.size(); i++){
+    if (dist<distances[i]){
+      index=i;
+      break;
+    }
+
+  }
+  if(index !=-1 && index ==0){
+    int indexabove=index;
+    int indexbelow=index;
+
+    double proportionBetweenDistancePoints=(dist-distances[indexbelow])/(distances[indexabove]-distances[indexbelow]);
+    double targetRatio=((ratioMap[distances[indexabove]] - ratioMap[distances[indexbelow]])*proportionBetweenDistancePoints)+ratioMap[distances[indexbelow]];
+    ratio=targetRatio;
+
+    double targetSpeed=((speedMap[distances[indexabove]] - speedMap[distances[indexbelow]])*proportionBetweenDistancePoints)+speedMap[distances[indexbelow]];
+    shooterMaximum=targetSpeed;
+  }
+  
+
+  shooterOutput = (copilot.GetRightTriggerAxis("noS") > 0.6) ? shooterMaximum : 0;
+  //Apply Ryan's confusing Deadzone math:
+  //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
+  shooterOutput = shooterMaximum-Deadzone(shooterMaximum-shooterOutput);
+  
+  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, shooterOutput);
+  rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput*ratio);
+  rightFlywheelTalon.SetInverted(true);
+  backSpinTalon.SetInverted(true);
+
+  frc::SmartDashboard::PutNumber("closed loop error", leftFlywheelTalon.GetClosedLoopError());
+
+
+  //Change this to be much much much much slower!!
+}
+
+void Robot::HandleBallManagement(){
+
+  // leftVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  // middleVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  // rightVictor.SetInverted(true);
+  // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+
+  ballManageOutput = (copilot.GetAButton() && abs(leftFlywheelTalon.GetClosedLoopError() < 50)) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+  bool ballManageReverse = copilot.GetBButton();
+  
+  //ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
+
+  if (ballManageOutput > 0)
+  {
+    leftVictor.Set(VictorSPXControlMode::PercentOutput, ballManageOutput);
+    middleVictor.Set(VictorSPXControlMode::PercentOutput, -ballManageOutput);
+    rightVictor.SetInverted(true);
+    rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+    ballManageReverse = false;
+  }
+  else if (ballManageReverse)
+  {
+    leftVictor.Set(VictorSPXControlMode::PercentOutput, -1 * frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) );
+    middleVictor.Set(VictorSPXControlMode::PercentOutput, frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5));
+    rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+  }
+  else
+  {
+    leftVictor.Set(VictorSPXControlMode::PercentOutput, 0);
+    middleVictor.Set(VictorSPXControlMode::PercentOutput, 0);
+    rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+  }
+
+  if (pilot.GetAButtonPressed())
+  {
+    frc::SmartDashboard::PutNumber("\nerror at shoot: ", leftFlywheelTalon.GetClosedLoopError());
+  }
+}
+
+void Robot::HandleIntake(){
+
+  bool isIntaking = pilot.GetLeftTriggerAxis() > 0.2;
+  intakeOutput = int(isIntaking) * intakeMaximum;
+  intakeMotor.Set(VictorSPXControlMode::PercentOutput, -intakeOutput);
+  frc::SmartDashboard::PutNumber("Intake Output", intakeOutput);
+
+ if (isIntaking){
+    leftSolenoid.Set(true);
+    rightSolenoid.Set(true);
+    frc::SmartDashboard::PutBoolean("Intake Extended", true);
+  }
+  else{
+    leftSolenoid.Set(false);
+    rightSolenoid.Set(false);
+    frc::SmartDashboard::PutBoolean("Intake Extended", false);
+  }
 }
 
 bool Robot::AimRobotAtHub(double motorSpeed)
@@ -266,6 +365,7 @@ double Robot::Avg(double val1, double val2)
 
 void Robot::PlaceShuffleboardTiles()
 {
+  //Initially place values to Shuffleboard
   frc::SmartDashboard::PutBoolean("Arcade Drive", true);
   frc::SmartDashboard::PutNumber("Tank Assist", 0.05);
   frc::SmartDashboard::PutNumber("Input Sensitivity", 0.4);
@@ -277,11 +377,20 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutBoolean("Ebrake", true);
   
   //frc::SmartDashboard::PutNumber("GearRatio", gearRatio);
+  
+  frc::SmartDashboard::PutNumber("Shooter Maximum", 13000);
+  frc::SmartDashboard::PutNumber("Shooter Output", 0);
+  frc::SmartDashboard::PutNumber("ratio backspin to flywheel",2.0/3.0);
+  frc::SmartDashboard::PutNumber("Ball Management Output", 0);
+  frc::SmartDashboard::PutNumber("Ball Management Maximum", 0.5);  
+  frc::SmartDashboard::PutNumber("Intake Maximum", 0.5);
+  frc::SmartDashboard::PutNumber("Intake Output", 0);
+  frc::SmartDashboard::PutBoolean("Intake Extended", false);
 }
 
 void Robot::GetTeleopShuffleBoardValues()
 {
-  //collect values from shuffleboard
+  //Collect values from Shuffleboard
   arcadeDrive = frc::SmartDashboard::GetBoolean("Arcade Drive", true);
   tankAssist = frc::SmartDashboard::GetNumber("Tank Assist", 0.08);
   defaultInputSensitivity = frc::SmartDashboard::GetNumber("Input Sensitivity", 0.4);
@@ -489,6 +598,14 @@ double Robot::DegreesToInches(double degrees)
   double RobotC = rotationAxisRadius * PI * 2;
   double radialPortion = degrees / 360;
   return (RobotC * radialPortion);
+
+  shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 13000);
+  shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
+  ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
+  shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum",0.5);
+  intakeOutput = frc::SmartDashboard::GetNumber("Intake Output", 0);
+  intakeMaximum = frc::SmartDashboard::GetNumber("Intake Maximum", 0.5);
+  intakeExtended = frc::SmartDashboard::GetBoolean("Intake Extended", false);
 }
 
 
@@ -496,4 +613,4 @@ double Robot::DegreesToInches(double degrees)
 int main() {
   return frc::StartRobot<Robot>();
 }
-#endif  
+#endif

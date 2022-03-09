@@ -6,6 +6,7 @@
 
 #include <ModifiableController.h>
 #include <rev/CANSparkMax.h>
+#include "ctre/Phoenix.h"
 #include <string>
 #include <fmt/core.h>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -15,6 +16,12 @@
 #include <frc/SpeedController.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <cmath> 
+#include <frc/Solenoid.h>
+#include <frc/DoubleSolenoid.h>
+#include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
+#include <ctre/phoenix/motorcontrol/can/TalonFX.h>
+#include <ctre/phoenix/motorcontrol/can/VictorSPX.h>
+
 
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/shuffleboard/ShuffleboardTab.h>
@@ -41,10 +48,13 @@ class Robot : public frc::TimedRobot {
   //Handle spam below
   void HandleDrivetrain();
   //General util stuff
+  void HandleShooter();
   void PlaceShuffleboardTiles();
   void GetTeleopShuffleBoardValues();
   void GetRobotShuffleoardValues();
   void GetControllerInput();
+  void HandleIntake();
+  void HandleBallManagement();
   double Deadzone(double pilotStickY);
   double Avg(double val1, double val2);
   double EncoderTicksToInches(double ticks, double TicksPerRev);
@@ -63,15 +73,30 @@ class Robot : public frc::TimedRobot {
   void TestAuton();
 
 
+  map<int, double> ratioMap = {{60, 0.8},
+                                     {90, 0.6},
+                                     {180, 0.6},
+                                     {270, 0.6}};
+  map<int, double> speedMap = {{60, 8750},
+                                     {90, 11500},
+                                     {180, 12500},
+                                     {270, 14800}};
 
+  std::array<int, 4> distances =
+  {
+    60,
+    90,
+    180,
+    270
+  };
 
   /*=============
   Pins & IDs
   =============*/
 
-
-
-
+  /*
+  #1 Drivetrain
+  */
   // The line below is just an example, it does not contain the correct deviceID, may not contain
   // correct MotorType: Brushless
   rev::CANSparkMax motorFL = rev::CANSparkMax(1, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
@@ -96,7 +121,48 @@ class Robot : public frc::TimedRobot {
   // Declare doubles to store joystick values
   // Copilot joystick values, not currently using these values
  
+  // Create motor controller groups
+  frc::MotorControllerGroup motorGroupLeft = frc::MotorControllerGroup(motorFL, motorBL);
+  frc::MotorControllerGroup motorGroupRight = frc::MotorControllerGroup(motorFR, motorBR);
+
+  // Pass motor controller groups to drivetrain object (also instantiate drivertrain object)
+  frc::DifferentialDrive drivetrain = frc::DifferentialDrive(motorGroupLeft, motorGroupRight);
   
+  /*
+  #2 Intake & Ball Management
+  */
+
+  //Pnematic Initial Values
+  frc::Solenoid leftSolenoid{frc::PneumaticsModuleType::CTREPCM, 0};
+  frc::Solenoid rightSolenoid{frc::PneumaticsModuleType::CTREPCM, 1};
+
+  // Motors Needed to run the Intake (ids are arbritrary values we'll change later)
+  ctre::phoenix::motorcontrol::can::VictorSPX intakeMotor{3};
+
+  // Motor for Ball Management (ids are arbritrary values we'll change later)
+  ctre::phoenix::motorcontrol::can::VictorSPX leftVictor{24}; //ids for Vitors are correct
+  ctre::phoenix::motorcontrol::can::VictorSPX middleVictor{25}; 
+  ctre::phoenix::motorcontrol::can::VictorSPX rightVictor{26}; 
+
+  /*
+  #3 Shooter
+  */
+  // Shooter Motor IDs and ball managment
+  ctre::phoenix::motorcontrol::can::TalonFX leftFlywheelTalon {4};
+  ctre::phoenix::motorcontrol::can::TalonFX rightFlywheelTalon {9}; //Set as inverted and following leftFlywheelTalon
+  ctre::phoenix::motorcontrol::can::TalonFX backSpinTalon {5}; //Set as inverted and following leftFlywheelTalon
+  
+    
+
+  /*=============
+  Constant Values
+  =============*/
+
+  /*
+  #1 Drivetrain
+  */
+
+  // Declare doubles to store joystick values
   // Whether inputs to TankDrive() should be squared (increases sensitivity of inputs at low speed)
 
   //MADE IT INIT
@@ -114,11 +180,19 @@ class Robot : public frc::TimedRobot {
 
   double turningSensitivity = 0.6;
 
+  /*
+  #2 Shooter
+  */
+  // (Arbritrary) Trigger values for Copilot Shooter
+  float shooterMaximum = 0.5;
+  double shooterOutput = 0;
 
+  /*
+  #3 Ball Management
+  */
 
-  // Create motor controller groups
-  frc::MotorControllerGroup motorGroupLeft = frc::MotorControllerGroup(motorFL, motorBL);
-  frc::MotorControllerGroup motorGroupRight = frc::MotorControllerGroup(motorFR, motorBR);
+  float ballManageMaximum = 0.05;
+  double ballManageOutput = 0;
 
   // Pass motor controller groups to drivetrain object (also instantiate drivertrain object)
   frc::DifferentialDrive drivetrain = frc::DifferentialDrive(motorGroupLeft, motorGroupRight);
@@ -148,4 +222,11 @@ class Robot : public frc::TimedRobot {
   double rotationAxisRadius = 13;
 
   bool autoAligning = false; 
+  /*
+  #4 Intake
+  */
+
+  bool intakeExtended = false;
+  float intakeMaximum = 1.0;
+  double intakeOutput = 0;
 };
