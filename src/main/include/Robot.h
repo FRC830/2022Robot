@@ -28,6 +28,8 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#include <cameraserver/CameraServer.h>
+
 #define PI 3.14159265
 
 

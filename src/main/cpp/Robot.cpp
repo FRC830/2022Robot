@@ -12,9 +12,9 @@ using namespace std;
 void Robot::RobotInit() {
   PlaceShuffleboardTiles();
   GetRobotShuffleoardValues();
-  invertRobot ? 
-    motorGroupRight.SetInverted(true) : 
-    motorGroupRight.SetInverted(true);
+  motorGroupLeft.SetInverted(true);
+
+  frc::CameraServer::StartAutomaticCapture();
 
   // motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   // motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -143,7 +143,7 @@ void Robot::TeleopPeriodic() {
   else {
     autoAligning = false;
   }
-  
+
   HandleDrivetrain();
   HandleShooter();
   HandleBallManagement();
@@ -191,7 +191,7 @@ void Robot::HandleDrivetrain() {
   //inputSentivityReduction = false;
   if (arcadeDrive)
   {
-    double turningSpeed = pilot.GetLeftX() * turningSensitivity;
+    double turningSpeed = pilot.GetLeftX() * turningSensitivity * -1;
     double forwardSpeed = pilot.GetRightY();
     if (autoAligning)
     {
@@ -245,7 +245,26 @@ void Robot::HandleShooter(){
   }
   
 
-  shooterOutput = (copilot.GetRightTriggerAxis("noS") > 0.6) ? shooterMaximum : 0;
+  // shooterOutput = ((copilot.GetRightTriggerAxis("noS") > 0.6) && !(copilot.GetLeftTriggerAxis("noS") > 0.6)) ? shooterMaximum : shooterMaximum;
+  // shooterOutput = shooterOutput == 0 && (copilot.GetLeftTriggerAxis("noS")) ? shooterMaximum * -0.5 : 0;
+
+  shooterOutput = ((copilot.GetRightTriggerAxis("noS") > 0.6) && !(copilot.GetLeftTriggerAxis("noS") > 0.6)) ? shooterMaximum * 1 : shooterOutput;
+  shooterOutput = copilot.GetLeftTriggerAxis("nos") > 0.6 && !copilot.GetRightTriggerAxis("noS") > 0.6 ? shooterOutput * -0.5 : shooterOutput; 
+  shooterOutput = !copilot.GetLeftTriggerAxis("nos") > 0.6 && !copilot.GetRightTriggerAxis("noS") > 0.6 ? shooterOutput : 0;
+
+  //comment out
+  // if ((copilot.GetRightTriggerAxis("noS") > 0.6) && (copilot.GetLeftTriggerAxis("noS") > 0.6))
+  // {
+
+  // }
+  // else if (copilot.GetRightTriggerAxis("noS") > 0.6)
+  // {
+  //   shooterOutput = shooterMaximum;
+  // }
+  // else if (copilot.GetLeftTriggerAxis("noS") > 0.6)
+  // {
+  //   shooterMaximum = shooterMaximum * -0.5;
+  // }
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
   shooterOutput = shooterMaximum-Deadzone(shooterMaximum-shooterOutput);
@@ -384,9 +403,9 @@ void Robot::PlaceShuffleboardTiles()
   
   //frc::SmartDashboard::PutNumber("GearRatio", gearRatio);
   
-  frc::SmartDashboard::PutNumber("Shooter Maximum", 13000);
+  frc::SmartDashboard::PutNumber("Shooter Maximum", 4250);
   frc::SmartDashboard::PutNumber("Shooter Output", 0);
-  frc::SmartDashboard::PutNumber("ratio backspin to flywheel",2.0/3.0);
+  frc::SmartDashboard::PutNumber("ratio backspin to flywheel",3.6);
   frc::SmartDashboard::PutNumber("Ball Management Output", 0);
   frc::SmartDashboard::PutNumber("Ball Management Maximum", 0.5);  
   frc::SmartDashboard::PutNumber("Intake Maximum", 0.5);
@@ -405,7 +424,7 @@ void Robot::GetTeleopShuffleBoardValues()
 
   ebrake = frc::SmartDashboard::GetNumber("Ebrake", true);
 
-  shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 13000);
+  shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 115000);
   shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
   ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
   shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum",0.5);
@@ -452,6 +471,7 @@ void Robot::TestAuton() {
 }
 
 void Robot::BackupAndShootAuton() {
+  frc::SmartDashboard::PutNumber("closed loop error", leftFlywheelTalon.GetClosedLoopError());
   // std::cout << "gear ratio: " << std::to_string(gearRatio) << std::endl;
   //drivetrain.TankDrive(0.3, 0.3, true);
   
@@ -485,9 +505,10 @@ void Robot::AccelerateFlywheelDuringAuton(int speed, double ratio)
   rightFlywheelTalon.SetInverted(true);
   backSpinTalon.SetInverted(true);
 
-  if (abs(leftFlywheelTalon.GetClosedLoopError()) < 100)
+  if (abs(leftFlywheelTalon.GetClosedLoopError()) < 100 && leftFlywheelTalon.GetClosedLoopError() != 0)
   {
     autonStep++;
+    std::cout << std::to_string(leftFlywheelTalon.GetClosedLoopError()) << std::endl;
   }
 }
 
@@ -498,6 +519,7 @@ void Robot::RunBallManagement(double speed)
   rightVictor.SetInverted(true);
   rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
 }
+
 void Robot::LinearMove(double distance, double motorSpeed)
 {
   assert (motorSpeed > 0);
