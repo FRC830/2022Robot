@@ -221,7 +221,7 @@ void Robot::HandleDrivetrain() {
 
 void Robot::HandleShooter(){
   int dist = frc::SmartDashboard::GetNumber("Shuffleboard/vision/distance",180);
-  double ratio = frc::SmartDashboard::GetNumber("ratio backspin to flywheel",2.0/3.0);
+  double ratio = frc::SmartDashboard::GetNumber("ratio backspin to flywheel",3.6);
   
   //index is the index of the distance data point right above, -1 if its above everything
   int index=-1;
@@ -248,23 +248,23 @@ void Robot::HandleShooter(){
   // shooterOutput = ((copilot.GetRightTriggerAxis("noS") > 0.6) && !(copilot.GetLeftTriggerAxis("noS") > 0.6)) ? shooterMaximum : shooterMaximum;
   // shooterOutput = shooterOutput == 0 && (copilot.GetLeftTriggerAxis("noS")) ? shooterMaximum * -0.5 : 0;
 
-  shooterOutput = ((copilot.GetRightTriggerAxis("noS") > 0.6) && !(copilot.GetLeftTriggerAxis("noS") > 0.6)) ? shooterMaximum * 1 : shooterOutput;
-  shooterOutput = copilot.GetLeftTriggerAxis("nos") > 0.6 && !copilot.GetRightTriggerAxis("noS") > 0.6 ? shooterOutput * -0.5 : shooterOutput; 
-  shooterOutput = !copilot.GetLeftTriggerAxis("nos") > 0.6 && !copilot.GetRightTriggerAxis("noS") > 0.6 ? shooterOutput : 0;
+  //shooterOutput = ((copilot.GetRightTriggerAxis("noS") > 0.6) && !(copilot.GetLeftTriggerAxis("noS") > 0.6)) ? shooterMaximum * 1 : shooterOutput;
+  //shooterOutput = copilot.GetLeftTriggerAxis("nos") > 0.6 && !copilot.GetRightTriggerAxis("noS") > 0.6 ? shooterOutput * -0.5 : shooterOutput; 
+  //shooterOutput = !copilot.GetLeftTriggerAxis("nos") > 0.6 && !copilot.GetRightTriggerAxis("noS") > 0.6 ? shooterOutput : 0;
 
   //comment out
-  // if ((copilot.GetRightTriggerAxis("noS") > 0.6) && (copilot.GetLeftTriggerAxis("noS") > 0.6))
-  // {
+  if ((copilot.GetRightTriggerAxis("noS") > 0.6) && (copilot.GetLeftTriggerAxis("noS") > 0.6))
+  {
 
-  // }
-  // else if (copilot.GetRightTriggerAxis("noS") > 0.6)
-  // {
-  //   shooterOutput = shooterMaximum;
-  // }
-  // else if (copilot.GetLeftTriggerAxis("noS") > 0.6)
-  // {
-  //   shooterMaximum = shooterMaximum * -0.5;
-  // }
+  }
+  else if (copilot.GetRightTriggerAxis("noS") > 0.6)
+  {
+    shooterOutput = shooterMaximum;
+  }
+  else if (copilot.GetLeftTriggerAxis("noS") > 0.6)
+  {
+    shooterMaximum = shooterMaximum * -0.5;
+  }
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
   shooterOutput = shooterMaximum-Deadzone(shooterMaximum-shooterOutput);
