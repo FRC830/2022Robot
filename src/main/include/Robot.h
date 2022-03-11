@@ -184,6 +184,13 @@ class Robot : public frc::TimedRobot {
 
   double turningSensitivity = 0.6;
 
+
+
+
+
+  //THIS is in the wrong spot
+int shootStablizer=0;
+
   /*
   #2 Shooter
   */

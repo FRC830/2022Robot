@@ -253,27 +253,69 @@ void Robot::HandleShooter(){
   //shooterOutput = !copilot.GetLeftTriggerAxis("nos") > 0.6 && !copilot.GetRightTriggerAxis("noS") > 0.6 ? shooterOutput : 0;
 
   //comment out
+  //static bool lastCopilotRightTrigger = false;
+  static bool risingEdgeFound = false;
+
+  if (copilot.GetRightTriggerAxis("noS") <= 0.6)
+  {
+    //lastCopilotRightTrigger = true;
+    // if (shooterOutput!=shooterMaximum && !risingEdgeFound){
+    //   //call on the rising edge
+    //   risingEdgeFound = true;
+    shootStablizer = 25;
+    std::cout << "stopped" << std::endl;
+    //   std::cout << shooterOutput << "," << shooterMaximum << std::endl;
+    // }
+    //shooterOutput = shooterMaximum;
+    
+  }
+
   if ((copilot.GetRightTriggerAxis("noS") > 0.6) && (copilot.GetLeftTriggerAxis("noS") > 0.6))
   {
 
   }
   else if (copilot.GetRightTriggerAxis("noS") > 0.6)
   {
+    //lastCopilotRightTrigger = true;
+    // if (shooterOutput!=shooterMaximum && !risingEdgeFound){
+    //   //call on the rising edge
+    //   risingEdgeFound = true;
+    //   shootStablizer = 20;
+    //   std::cout << shooterOutput << "," << shooterMaximum << std::endl;
+    // }
     shooterOutput = shooterMaximum;
+    
   }
   else if (copilot.GetLeftTriggerAxis("noS") > 0.6)
   {
     shooterMaximum = shooterMaximum * -0.5;
   }
+
+  if (copilot.GetLeftTriggerAxis("noS") < 0.2)
+  {
+    risingEdgeFound = false;
+  }
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
   shooterOutput = shooterMaximum-Deadzone(shooterMaximum-shooterOutput);
+
+  if (shooterOutput > 200)
+  {
+    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, shooterOutput);
+    rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+    backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput * ratio);
+    rightFlywheelTalon.SetInverted(true);
+    backSpinTalon.SetInverted(true);
+  }
+  else
+  {
+    leftFlywheelTalon.Set(TalonFXControlMode::PercentOutput, 0);
+    rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+    backSpinTalon.Set(TalonFXControlMode::PercentOutput, 0);
+    rightFlywheelTalon.SetInverted(true);
+    backSpinTalon.SetInverted(true);
+  }
   
-  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, shooterOutput);
-  rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-  backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput * ratio);
-  rightFlywheelTalon.SetInverted(true);
-  backSpinTalon.SetInverted(true);
 
   frc::SmartDashboard::PutNumber("closed loop error", leftFlywheelTalon.GetClosedLoopError());
 
@@ -282,14 +324,19 @@ void Robot::HandleShooter(){
 }
 
 void Robot::HandleBallManagement(){
+  std::cout << std::to_string(shootStablizer) << std::endl; 
+  shootStablizer--;
 
   // leftVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
   // middleVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
   // rightVictor.SetInverted(true);
   // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
 
-  ballManageOutput = (copilot.GetAButton() && abs(leftFlywheelTalon.GetClosedLoopError() < 50)) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+  // ballManageOutput = (copilot.GetAButton() && abs(leftFlywheelTalon.GetClosedLoopError() < 145)) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+  ballManageOutput = (copilot.GetAButton() && shootStablizer < 0) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+
   bool ballManageReverse = copilot.GetBButton();
+
   
   //ballManageOutput = ballManageMaximum-Deadzone(ballManageMaximum-ballManageOutput);
 
@@ -394,7 +441,7 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutBoolean("Arcade Drive", true);
   frc::SmartDashboard::PutNumber("Tank Assist", 0.05);
   frc::SmartDashboard::PutNumber("Input Sensitivity", 0.4);
-  frc::SmartDashboard::PutNumber("Turning Sensitivity", 0.6);
+  frc::SmartDashboard::PutNumber("Turning Sensitivity", 0.91);
   frc::SmartDashboard::PutNumber("Deadzone Size", 0.05);
   frc::SmartDashboard::PutNumber("Auton Mode", 2);
   frc::SmartDashboard::PutBoolean("Invert Robot", false);
@@ -419,7 +466,7 @@ void Robot::GetTeleopShuffleBoardValues()
   arcadeDrive = frc::SmartDashboard::GetBoolean("Arcade Drive", true);
   tankAssist = frc::SmartDashboard::GetNumber("Tank Assist", 0.08);
   defaultInputSensitivity = frc::SmartDashboard::GetNumber("Input Sensitivity", 0.4);
-  turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.6);
+  turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.91);
   deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 
   ebrake = frc::SmartDashboard::GetNumber("Ebrake", true);
