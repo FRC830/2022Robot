@@ -488,10 +488,11 @@ void Robot::BackupAndShootAuton() {
     case 2:
       AccelerateFlywheelDuringAuton(11500, 0.6);
       break;
-    case 3:
+    case 350:
       RunBallManagement(0.5);
       break;
     default:
+      autonStep++;
       break;
   }
   return;
