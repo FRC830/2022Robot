@@ -333,7 +333,7 @@ void Robot::HandleBallManagement(){
   // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
 
   // ballManageOutput = (copilot.GetAButton() && abs(leftFlywheelTalon.GetClosedLoopError() < 145)) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
-  ballManageOutput = (copilot.GetX\[]Button() || (copilot.GetAButton() && (shootStablizer < 0 || shootStablizer == TIMERLENGTH))) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+  ballManageOutput = (copilot.GetXButton() || (copilot.GetAButton() && (shootStablizer < 0 || shootStablizer == TIMERLENGTH))) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
 
   bool ballManageReverse = copilot.GetBButton();
 
@@ -450,7 +450,7 @@ void Robot::PlaceShuffleboardTiles()
   
   //frc::SmartDashboard::PutNumber("GearRatio", gearRatio);
   
-  frc::SmartDashboard::PutNumber("Shooter Maximum", 3600);
+  frc::SmartDashboard::PutNumber("Shooter Maximum", 4000);
   frc::SmartDashboard::PutNumber("Shooter Output", 0);
   frc::SmartDashboard::PutNumber("ratio backspin to flywheel",4);
   frc::SmartDashboard::PutNumber("Ball Management Output", 0);
@@ -471,7 +471,7 @@ void Robot::GetTeleopShuffleBoardValues()
 
   ebrake = frc::SmartDashboard::GetNumber("Ebrake", true);
 
-  shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 115000);
+  shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 4000);
   shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
   ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
   shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum",0.5);
@@ -524,18 +524,17 @@ void Robot::BackupAndShootAuton() {
   
   //std::printf("Basic move ton");
   //autonStep = 1;
-  std::cout << "Basic Auton is running!" << std::endl;
+  std::cout << "Auton Step is : " << std::to_string(autonStep) << std::endl;
+
   switch(autonStep)
   {
     case 1:
-      //std::printf("In the switch");
-      //LinearMove(-84.75, 0.5);
-      LinearMove(-84.75, 0.5);
+      LinearMove(-84.75, 0.55);
       break;
     case 2:
-      AccelerateFlywheelDuringAuton(11500, 0.6);
+      AccelerateFlywheelDuringAuton(4250, 4.0);
       break;
-    case 350:
+    case 100:
       RunBallManagement(0.5);
       break;
     default:
@@ -553,11 +552,8 @@ void Robot::AccelerateFlywheelDuringAuton(int speed, double ratio)
   rightFlywheelTalon.SetInverted(true);
   backSpinTalon.SetInverted(true);
 
-  if (abs(leftFlywheelTalon.GetClosedLoopError()) < 100 && leftFlywheelTalon.GetClosedLoopError() != 0)
-  {
-    autonStep++;
-    std::cout << std::to_string(leftFlywheelTalon.GetClosedLoopError()) << std::endl;
-  }
+  autonStep++;
+  std::cout << std::to_string(leftFlywheelTalon.GetClosedLoopError()) << std::endl;
 }
 
 void Robot::RunBallManagement(double speed)
