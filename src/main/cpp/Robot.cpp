@@ -262,7 +262,7 @@ void Robot::HandleShooter(){
     // if (shooterOutput!=shooterMaximum && !risingEdgeFound){
     //   //call on the rising edge
     //   risingEdgeFound = true;
-    shootStablizer = 25;
+    shootStablizer = TIMERLENGTH;
     std::cout << "stopped" << std::endl;
     //   std::cout << shooterOutput << "," << shooterMaximum << std::endl;
     // }
@@ -333,7 +333,7 @@ void Robot::HandleBallManagement(){
   // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
 
   // ballManageOutput = (copilot.GetAButton() && abs(leftFlywheelTalon.GetClosedLoopError() < 145)) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
-  ballManageOutput = (copilot.GetAButton() && shootStablizer < 0) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+  ballManageOutput = (copilot.GetX\[]Button() || (copilot.GetAButton() && (shootStablizer < 0 || shootStablizer == TIMERLENGTH))) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
 
   bool ballManageReverse = copilot.GetBButton();
 
@@ -450,9 +450,9 @@ void Robot::PlaceShuffleboardTiles()
   
   //frc::SmartDashboard::PutNumber("GearRatio", gearRatio);
   
-  frc::SmartDashboard::PutNumber("Shooter Maximum", 4250);
+  frc::SmartDashboard::PutNumber("Shooter Maximum", 3600);
   frc::SmartDashboard::PutNumber("Shooter Output", 0);
-  frc::SmartDashboard::PutNumber("ratio backspin to flywheel",3.6);
+  frc::SmartDashboard::PutNumber("ratio backspin to flywheel",4);
   frc::SmartDashboard::PutNumber("Ball Management Output", 0);
   frc::SmartDashboard::PutNumber("Ball Management Maximum", 0.5);  
   frc::SmartDashboard::PutNumber("Intake Maximum", 0.5);

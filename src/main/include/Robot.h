@@ -189,6 +189,7 @@ class Robot : public frc::TimedRobot {
 
 
   //THIS is in the wrong spot
+const int TIMERLENGTH = 25;
 int shootStablizer=0;
 
   /*
