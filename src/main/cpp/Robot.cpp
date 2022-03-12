@@ -280,13 +280,11 @@ void Robot::HandleShooter(){
     
   }
 
+  if ((copilot.GetRightTriggerAxis("noS") > 0.6) && (copilot.GetLeftTriggerAxis("noS") > 0.6))
+  {
 
-
-  // if ((copilot.GetRightTriggerAxis("noS") > 0.6) && (copilot.GetLeftTriggerAxis("noS") > 0.6))
-  // {
-
-  // }
-  if (copilot.GetRightTriggerAxis("noS") > 0.6 && !longSHOTHANGER) 
+  }
+  else if (copilot.GetRightTriggerAxis("noS") > 0.6)
   {
     //lastCopilotRightTrigger = true;
     // if (shooterOutput!=shooterMaximum && !risingEdgeFound){
@@ -298,20 +296,18 @@ void Robot::HandleShooter(){
     shooterOutput = shooterMaximum;
     
   }
-  // else if (copilot.GetLeftTriggerAxis("noS") > 0.6)
-  // {
-  //   shooterMaximum = shooterMaximum * -0.5;
-  // }
-  else if (longSHOTHANGER && copilot.GetRightTriggerAxis("nos") > 0.6) {
-    shooterOutput = shooterHANGER;
+  else if (copilot.GetLeftTriggerAxis("noS") > 0.6)
+  {
+    shooterMaximum = shooterMaximum * -0.5;
   }
+
   if (copilot.GetLeftTriggerAxis("noS") < 0.2)
   {
     risingEdgeFound = false;
   }
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
-  shooterOutput = longSHOTHANGER ? shooterHANGER-Deadzone(shooterHANGER-shooterOutput) : shooterMaximum - Deadzone(shooterMaximum - shooterOutput);
+  shooterOutput = shooterMaximum-Deadzone(shooterMaximum-shooterOutput);
 
   if (shooterOutput > 200)
   {
