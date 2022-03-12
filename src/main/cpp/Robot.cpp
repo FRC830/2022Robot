@@ -228,7 +228,11 @@ void Robot::HandleDrivetrain() {
 void Robot::HandleShooter(){
   int dist = frc::SmartDashboard::GetNumber("Shuffleboard/vision/distance",180);
   double ratio = frc::SmartDashboard::GetNumber("ratio backspin to flywheel",3.6);
-  
+
+
+  longSHOTHANGER = copilot.GetYButton();
+  frc::SmartDashboard::PutBoolean("GET Y BUTTON", longSHOTHANGER);
+
   //index is the index of the distance data point right above, -1 if its above everything
   int index=-1;
   for(int i =0; i< distances.size(); i++){
@@ -276,11 +280,13 @@ void Robot::HandleShooter(){
     
   }
 
-  if ((copilot.GetRightTriggerAxis("noS") > 0.6) && (copilot.GetLeftTriggerAxis("noS") > 0.6))
-  {
 
-  }
-  else if (copilot.GetRightTriggerAxis("noS") > 0.6)
+
+  // if ((copilot.GetRightTriggerAxis("noS") > 0.6) && (copilot.GetLeftTriggerAxis("noS") > 0.6))
+  // {
+
+  // }
+  if (copilot.GetRightTriggerAxis("noS") > 0.6 && !longSHOTHANGER) 
   {
     //lastCopilotRightTrigger = true;
     // if (shooterOutput!=shooterMaximum && !risingEdgeFound){
@@ -292,18 +298,20 @@ void Robot::HandleShooter(){
     shooterOutput = shooterMaximum;
     
   }
-  else if (copilot.GetLeftTriggerAxis("noS") > 0.6)
-  {
-    shooterMaximum = shooterMaximum * -0.5;
+  // else if (copilot.GetLeftTriggerAxis("noS") > 0.6)
+  // {
+  //   shooterMaximum = shooterMaximum * -0.5;
+  // }
+  else if (longSHOTHANGER && copilot.GetRightTriggerAxis("nos") > 0.6) {
+    shooterOutput = shooterHANGER;
   }
-
   if (copilot.GetLeftTriggerAxis("noS") < 0.2)
   {
     risingEdgeFound = false;
   }
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
-  shooterOutput = shooterMaximum-Deadzone(shooterMaximum-shooterOutput);
+  shooterOutput = longSHOTHANGER ? shooterHANGER-Deadzone(shooterHANGER-shooterOutput) : shooterMaximum - Deadzone(shooterMaximum - shooterOutput);
 
   if (shooterOutput > 200)
   {
@@ -313,8 +321,7 @@ void Robot::HandleShooter(){
     rightFlywheelTalon.SetInverted(true);
     backSpinTalon.SetInverted(true);
   }
-  else
-  {
+  else {
     leftFlywheelTalon.Set(TalonFXControlMode::PercentOutput, 0);
     rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
     backSpinTalon.Set(TalonFXControlMode::PercentOutput, 0);
@@ -340,6 +347,7 @@ void Robot::HandleBallManagement(){
 
   // ballManageOutput = (copilot.GetAButton() && abs(leftFlywheelTalon.GetClosedLoopError() < 145)) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
   ballManageOutput = (copilot.GetXButton() || (copilot.GetAButton() && (shootStablizer < 0 || shootStablizer == TIMERLENGTH))) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+ 
 
   bool ballManageReverse = copilot.GetBButton();
 
@@ -354,14 +362,12 @@ void Robot::HandleBallManagement(){
     rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
     ballManageReverse = false;
   }
-  else if (ballManageReverse)
-  {
+  else if (ballManageReverse) {
     leftVictor.Set(VictorSPXControlMode::PercentOutput, -1 * frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) );
     middleVictor.Set(VictorSPXControlMode::PercentOutput, frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5));
     rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
   }
-  else
-  {
+  else {
     leftVictor.Set(VictorSPXControlMode::PercentOutput, 0);
     middleVictor.Set(VictorSPXControlMode::PercentOutput, 0);
     rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
@@ -457,6 +463,7 @@ void Robot::PlaceShuffleboardTiles()
   //frc::SmartDashboard::PutNumber("GearRatio", gearRatio);
   
   frc::SmartDashboard::PutNumber("Shooter Maximum", 4000);
+  frc::SmartDashboard::PutNumber("Shooter HANGER", 100);
   frc::SmartDashboard::PutNumber("Shooter Output", 0);
   frc::SmartDashboard::PutNumber("ratio backspin to flywheel",4);
   frc::SmartDashboard::PutNumber("Ball Management Output", 0);
@@ -464,6 +471,7 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutNumber("Intake Maximum", 0.5);
   frc::SmartDashboard::PutNumber("Intake Output", 0);
   frc::SmartDashboard::PutBoolean("Intake Extended", false);
+  frc::SmartDashboard::PutBoolean("GET Y BUTTON", false);
 }
 
 void Robot::GetTeleopShuffleBoardValues()
@@ -478,12 +486,14 @@ void Robot::GetTeleopShuffleBoardValues()
   ebrake = frc::SmartDashboard::GetNumber("Ebrake", true);
 
   shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 4000);
+  shooterHANGER = frc::SmartDashboard::GetNumber("Shooter HANGER MAX", 100);
   shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
   ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
   shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum",0.5);
   intakeOutput = frc::SmartDashboard::GetNumber("Intake Output", 0);
   intakeMaximum = frc::SmartDashboard::GetNumber("Intake Maximum", 0.5);
   intakeExtended = frc::SmartDashboard::GetBoolean("Intake Extended", false);
+  //longSHOTHANGER = frc::SmartDashboard::GetBoolean("GET Y BUTTON", false);
   
 }
 
@@ -539,18 +549,18 @@ void Robot::BackupAndShootAuton() {
     case 1:
       LinearMove(-84.75, 0.55);
       break;
-     case 100:
+     case 10:
       AccelerateFlywheelDuringAuton(4500, 4.0);
       break;
-    case 201:
+    case 110:
       RunBallManagement(0.5);
       break;
-    case 261:
-      RunBallManagement(0);
-      break;
-    case 350:
-      RunBallManagement(0.5);
-      break;
+    // case 220:
+    //   RunBallManagement(0);
+    //   break;
+    // case 350:
+    //   RunBallManagement(0.5);
+    // break;
     default:
       autonStep++;
       break;

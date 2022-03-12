@@ -198,7 +198,10 @@ int shootStablizer=0;
   */
   // (Arbritrary) Trigger values for Copilot Shooter
   float shooterMaximum = 0.5;
+  float shooterHANGER = 0.5; 
   double shooterOutput = 0;
+
+  bool longSHOTHANGER = false; 
 
   /*
   #3 Ball Management
