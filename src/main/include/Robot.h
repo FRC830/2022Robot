@@ -71,6 +71,7 @@ class Robot : public frc::TimedRobot {
   void CompoundMove(double distance, double degrees, double motorSpeed);
   void AccelerateFlywheelDuringAuton(int speed, double ratio);
   void RunBallManagement(double speed);
+  void runIntake(double speed);
   //Auton Comb...
   void Taxi();
   void BackupAndShootAuton();
@@ -239,4 +240,6 @@ int shootStablizer=0;
   bool intakeExtended = false;
   float intakeMaximum = 1.0;
   double intakeOutput = 0;
+
+
 };

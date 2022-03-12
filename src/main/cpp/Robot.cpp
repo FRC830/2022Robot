@@ -71,6 +71,12 @@ void Robot::AutonomousInit() {
   // motorBLEncoder.SetPosition(0);
   // motorBREncoder.SetPosition(0);
 
+  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, 0);
+  rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  backSpinTalon.Set(TalonFXControlMode::Velocity, 0);
+  rightFlywheelTalon.SetInverted(true);
+  backSpinTalon.SetInverted(true);
+
   
   
 }
@@ -526,15 +532,23 @@ void Robot::BackupAndShootAuton() {
   //autonStep = 1;
   std::cout << "Auton Step is : " << std::to_string(autonStep) << std::endl;
 
+  runIntake(0.5);
+  
   switch(autonStep)
   {
     case 1:
       LinearMove(-84.75, 0.55);
       break;
-    case 2:
-      AccelerateFlywheelDuringAuton(4250, 4.0);
+     case 100:
+      AccelerateFlywheelDuringAuton(4500, 4.0);
       break;
-    case 100:
+    case 201:
+      RunBallManagement(0.5);
+      break;
+    case 261:
+      RunBallManagement(0);
+      break;
+    case 350:
       RunBallManagement(0.5);
       break;
     default:
@@ -542,6 +556,17 @@ void Robot::BackupAndShootAuton() {
       break;
   }
   return;
+}
+
+void Robot::runIntake(double speed)
+{
+  intakeOutput = speed * intakeMaximum;
+  intakeMotor.Set(VictorSPXControlMode::PercentOutput, -intakeOutput);
+  frc::SmartDashboard::PutNumber("Intake Output", intakeOutput);
+
+  leftSolenoid.Set(true);
+  rightSolenoid.Set(true);
+  frc::SmartDashboard::PutBoolean("Intake Extended", true);
 }
 
 void Robot::AccelerateFlywheelDuringAuton(int speed, double ratio)
