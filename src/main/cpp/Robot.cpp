@@ -8,20 +8,11 @@
 
 
 using namespace std;
-
-void Robot::RobotInit() {
-  PlaceShuffleboardTiles();
-  GetRobotShuffleoardValues();
-  motorGroupLeft.SetInverted(true);
-
-  frc::CameraServer::StartAutomaticCapture();
-
-  // motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  // motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  // motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  // motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-}
-
+// The following will be unused FRC provided default functions
+// ****************************************; 
+// ****************************************; 
+// ****************************************; 
+// ****************************************;
 /*
  * This function is called every robot packet, no matter the mode. Use
  * this for items like diagnostics that you want ran during disabled,
@@ -33,149 +24,17 @@ void Robot::RobotInit() {
 
 void Robot::RobotPeriodic() {}
 
-
-void Robot::AutonomousInit() {
-
-  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
-  firstCallToAuton = true;
-  firstCallToAuton = true;
-  autonMovingMotor = false;
-  autonStep = 1;
-  newAutonCall = true;
-
-
-  motorFLEncoder.SetPosition(0.0);
-  motorFREncoder.SetPosition(0.0);
-  motorBLEncoder.SetPosition(0.0);
-  motorBREncoder.SetPosition(0.0);
-
-  if (motorBREncoder.SetPosition(0.0) == rev::REVLibError::kOk)
-  {
-    std::cout << std::endl << "BR Encoder successfully set to: " << motorBREncoder.GetPosition() << std::endl;
-  }
-  std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
-  std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
-  std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
-
-  // look at suffleboard...
-  autonMode = frc::SmartDashboard::GetNumber("Auton Mode", 2);
-
-  firstCallToAuton = true;
-
-  // motorFLEncoder.SetPosition(0);
-  // motorFREncoder.SetPosition(0);
-  // motorBLEncoder.SetPosition(0);
-  // motorBREncoder.SetPosition(0);
-
-  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, 0);
-  rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-  backSpinTalon.Set(TalonFXControlMode::Velocity, 0);
-  rightFlywheelTalon.SetInverted(true);
-  backSpinTalon.SetInverted(true);
-
-  
-  
-}
-
-void Robot::AutonomousPeriodic() {
-
-  if (firstCallToAuton)
-  {
-    firstCallToAuton = false;
-    return;
-  }
-
-  std::cout << "BR Encoder " << motorFLEncoder.GetPosition() << std::endl;
-  std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
-  std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
-  std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
-
-   switch(autonMode) {
-     case 1:
-       Taxi(); 
-       break;
-     case 2:
-       BackupAndShootAuton();
-       break; 
-     case 3:
-       TestAuton();
-       break; 
-     default:
-       Taxi(); 
-       break;
-  }
-}
-
-
-void Robot::TeleopInit() {
-  
-  GetTeleopShuffleBoardValues();
-  pilot.setDeadzone();
-  copilot.setDeadzone();
-  pilot.setDeadzoneLimit(0.1);
-  copilot.setDeadzoneLimit(0.1);
-  pilot.setSensitivity();
-  pilot.setSensitivityLevel(defaultInputSensitivity);
-
-  if (ebrake)
-  {
-  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
-  }
-
-
-  
-}
-
-void Robot::TeleopPeriodic() {
-  GetTeleopShuffleBoardValues();
-
-  autoAligning = pilot.GetAButton();
-  if (autoAligning) {
-    //KEEP THESE TWO SEPERATE IF STATEMENTS!!! VERY IMPROTANT!!!
-    if (AimRobotAtHub(0.4)){
-      //rumble
-      pilot.SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 1);
-      pilot.SetRumble(frc::GenericHID::RumbleType::kRightRumble, 1);
-    }
-  }
-  else {
-    autoAligning = false;
-  }
-
-  HandleDrivetrain();
-  HandleShooter();
-  HandleBallManagement();
-  HandleIntake();
-}
-
-void Robot::DisabledInit() {
-  firstCallToAuton = true;
-  firstCallToAuton = true;
-  autonMovingMotor = false;
-  autonStep = 1;
-  newAutonCall = true;
-
-  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
-  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
-  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
-  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
-
-}
-
 void Robot::DisabledPeriodic() {}
 
 void Robot::TestInit() {}
 
 void Robot::TestPeriodic() {}
 
+// The following are the "Handle" functions; 
+// ****************************************; 
+// ****************************************; 
+// ****************************************; 
+// ****************************************;
 
 void Robot::HandleDrivetrain() {
   //original input sensitivity code + turbo. Uncomment if needed
@@ -230,8 +89,8 @@ void Robot::HandleShooter(){
   double ratio = frc::SmartDashboard::GetNumber("ratio backspin to flywheel",3.6);
 
 
-  longSHOTHANGER = copilot.GetYButton();
-  frc::SmartDashboard::PutBoolean("GET Y BUTTON", longSHOTHANGER);
+  // longSHOTHANGER = copilot.GetYButton();
+  // frc::SmartDashboard::PutBoolean("GET Y BUTTON", longSHOTHANGER);
 
   //index is the index of the distance data point right above, -1 if its above everything
   int index=-1;
@@ -286,7 +145,7 @@ void Robot::HandleShooter(){
   // {
 
   // }
-  if (copilot.GetRightTriggerAxis("noS") > 0.6 && !longSHOTHANGER) 
+  if (copilot.GetRightTriggerAxis("noS") > 0.6) 
   {
     //lastCopilotRightTrigger = true;
     // if (shooterOutput!=shooterMaximum && !risingEdgeFound){
@@ -298,20 +157,24 @@ void Robot::HandleShooter(){
     shooterOutput = shooterMaximum;
     
   }
+
+  
   // else if (copilot.GetLeftTriggerAxis("noS") > 0.6)
   // {
   //   shooterMaximum = shooterMaximum * -0.5;
   // }
-  else if (longSHOTHANGER && copilot.GetRightTriggerAxis("nos") > 0.6) {
-    shooterOutput = shooterHANGER;
-  }
+  // else if (copilot.GetRightTriggerAxis("nos") > 0.6) {
+  //   shooterOutput = shooterHANGER;
+  // }
   if (copilot.GetLeftTriggerAxis("noS") < 0.2)
   {
     risingEdgeFound = false;
   }
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
-  shooterOutput = longSHOTHANGER ? shooterHANGER-Deadzone(shooterHANGER-shooterOutput) : shooterMaximum - Deadzone(shooterMaximum - shooterOutput);
+  //shooterOutput = longSHOTHANGER ? shooterHANGER-Deadzone(shooterHANGER-shooterOutput) : shooterMaximum - Deadzone(shooterMaximum - shooterOutput);
+
+  shooterOutput = shooterMaximum - Deadzone(shooterMaximum - shooterOutput);
 
   if (shooterOutput > 200)
   {
@@ -331,6 +194,9 @@ void Robot::HandleShooter(){
   
 
   frc::SmartDashboard::PutNumber("closed loop error", leftFlywheelTalon.GetClosedLoopError());
+
+
+
 
 
   //Change this to be much much much much slower!!
@@ -397,6 +263,257 @@ void Robot::HandleIntake(){
     frc::SmartDashboard::PutBoolean("Intake Extended", false);
   }
 }
+
+// The following are the used FRC default functions;
+// ****************************************; 
+// ****************************************; 
+// ****************************************; 
+// ****************************************;
+
+void Robot::RobotInit() {
+  PlaceShuffleboardTiles();
+  GetRobotShuffleoardValues();
+  motorGroupLeft.SetInverted(true);
+
+  frc::CameraServer::StartAutomaticCapture();
+
+  // Uncommet stuff below if you want to suffer
+
+  // motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  // motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  // motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  // motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+}
+
+void Robot::AutonomousInit() {
+
+  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+  // aw repetition? 
+  // firstCallToAuton = true;
+  firstCallToAuton = true;
+  autonMovingMotor = false;
+  autonStep = 1;
+  newAutonCall = true;
+
+
+  motorFLEncoder.SetPosition(0.0);
+  motorFREncoder.SetPosition(0.0);
+  motorBLEncoder.SetPosition(0.0);
+  motorBREncoder.SetPosition(0.0);
+
+  if (motorBREncoder.SetPosition(0.0) == rev::REVLibError::kOk)
+  {
+    std::cout << std::endl << "BR Encoder successfully set to: " << motorBREncoder.GetPosition() << std::endl;
+  }
+  // printStatement for encoders 
+  // std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
+  // std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
+  // std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
+
+  // look at suffleboard...
+  autonMode = frc::SmartDashboard::GetNumber("Auton Mode", 2);
+
+  firstCallToAuton = true;
+
+  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, 0);
+  rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  backSpinTalon.Set(TalonFXControlMode::Velocity, 0);
+  rightFlywheelTalon.SetInverted(true);
+  backSpinTalon.SetInverted(true);
+}
+
+void Robot::AutonomousPeriodic() {
+
+  if (firstCallToAuton)
+  {
+    firstCallToAuton = false;
+    return;
+  }
+// Print statement commeted out to save stuff... idk why... prob cuz i'm bored
+  // std::cout << "BR Encoder " << motorFLEncoder.GetPosition() << std::endl;
+  // std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
+  // std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
+  // std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
+
+   switch(autonMode) {
+     case 1:
+       Taxi(); 
+       break;
+     case 2:
+       TwoBallAuton();
+       break; 
+     case 3:
+       TestAuton();
+       break; 
+     default:
+       Taxi(); 
+       break;
+  }
+}
+
+void Robot::TeleopInit() {
+  
+  GetTeleopShuffleBoardValues();
+  pilot.setDeadzone();
+  copilot.setDeadzone();
+  pilot.setDeadzoneLimit(0.1);
+  copilot.setDeadzoneLimit(0.1);
+  pilot.setSensitivity();
+  pilot.setSensitivityLevel(defaultInputSensitivity);
+
+  if (ebrake)
+  {
+  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+  }  
+}
+
+void Robot::TeleopPeriodic() {
+  GetTeleopShuffleBoardValues();
+
+  autoAligning = pilot.GetAButton();
+  if (autoAligning) {
+    //KEEP THESE TWO SEPERATE IF STATEMENTS!!! VERY IMPROTANT!!!
+    if (AimRobotAtHub(0.4)){
+      //rumble
+      pilot.SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 1);
+      pilot.SetRumble(frc::GenericHID::RumbleType::kRightRumble, 1);
+    }
+  }
+
+  //what's the point... bro
+  // else {
+  //   autoAligning = false;
+  // }
+
+  HandleDrivetrain();
+  HandleShooter();
+  HandleBallManagement();
+  HandleIntake();
+}
+
+void Robot::DisabledInit() {
+  firstCallToAuton = true;
+  firstCallToAuton = true;
+  autonMovingMotor = false;
+  autonStep = 1;
+  newAutonCall = true;
+
+  motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+  motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+  motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+  motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+
+}
+
+// The following are the different Auton Modes that we have
+// ****************************************; 
+// ****************************************; 
+// ****************************************; 
+// ****************************************;
+
+void Robot::Taxi() {
+  if (autonStep == 1) {
+    LinearMove(-84.75, 0.5);
+
+  }
+}
+
+void Robot::TestAuton() {
+  // std::cout << "gear ratio: " << std::to_string(gearRatio) << std::endl;
+  //drivetrain.TankDrive(0.3, 0.3, true);
+  
+  //std::printf("Basic move ton");
+  //autonStep = 1;
+  std::cout << "Basic Auton is running!" << std::endl;
+  switch(autonStep)
+  {
+    case 1:
+      //std::printf("In the switch");
+      CenterPointTurn(90.0, 0.0009);
+      break;
+    case 2:
+      CenterPointTurn(-90.0, 0.0009);
+      break;
+    default:
+      break;
+  }
+  return;
+}
+
+void Robot::TwoBallAuton() {
+  frc::SmartDashboard::PutNumber("closed loop error", leftFlywheelTalon.GetClosedLoopError());
+  // std::cout << "gear ratio: " << std::to_string(gearRatio) << std::endl;
+  //drivetrain.TankDrive(0.3, 0.3, true);
+  
+  //std::printf("Basic move ton");
+  //autonStep = 1;
+  std::cout << "Auton Step is : " << std::to_string(autonStep) << std::endl;
+
+  RunIntake(0.5);
+  
+  switch(autonStep)
+  {
+    case 1:
+      LinearMove(-84.75, 0.55);
+      break;
+     case 10:
+      AccelerateFlywheelDuringAuton(4500, 4.0);
+      break;
+    case 110:
+      RunBallManagement(0.5);
+      break;
+    // case 220:
+    //   RunBallManagement(0);
+    //   break;
+    // case 350:
+    //   RunBallManagement(0.5);
+    // break;
+    default:
+      autonStep++;
+      break;
+  }
+  return;
+}
+
+// The following are the costum robot functions
+// ****************************************; 
+// ****************************************; 
+// ****************************************; 
+// ****************************************;
+
+void Robot::RunIntake(double speed)
+{
+  intakeOutput = speed * intakeMaximum;
+  intakeMotor.Set(VictorSPXControlMode::PercentOutput, -intakeOutput);
+  frc::SmartDashboard::PutNumber("Intake Output", intakeOutput);
+
+  leftSolenoid.Set(true);
+  rightSolenoid.Set(true);
+  frc::SmartDashboard::PutBoolean("Intake Extended", true);
+}
+
+void Robot::RunBallManagement(double speed)
+{
+  leftVictor.Set(VictorSPXControlMode::PercentOutput, speed);
+  middleVictor.Set(VictorSPXControlMode::PercentOutput, -speed);
+  rightVictor.SetInverted(true);
+  rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+}
+
+// The following are the utility functions; 
+// (NOTE: we might want to consider moving this to another file or something cuz this one's too big) 
+// ****************************************; 
+// ****************************************; 
+// ****************************************; 
+// ****************************************;
 
 bool Robot::AimRobotAtHub(double motorSpeed)
 {
@@ -504,81 +621,6 @@ void Robot::GetRobotShuffleoardValues()
   //gearRatio = frc::SmartDashboard::GetNumber("GearRatio", gearRatio);
 }
 
-void Robot::Taxi() {
-  if (autonStep == 1) {
-    LinearMove(-84.75, 0.5);
-
-  }
-}
-
-void Robot::TestAuton() {
-  // std::cout << "gear ratio: " << std::to_string(gearRatio) << std::endl;
-  //drivetrain.TankDrive(0.3, 0.3, true);
-  
-  //std::printf("Basic move ton");
-  //autonStep = 1;
-  std::cout << "Basic Auton is running!" << std::endl;
-  switch(autonStep)
-  {
-    case 1:
-      //std::printf("In the switch");
-      CenterPointTurn(90.0, 0.0009);
-      break;
-    case 2:
-      CenterPointTurn(-90.0, 0.0009);
-      break;
-    default:
-      break;
-  }
-  return;
-}
-
-void Robot::BackupAndShootAuton() {
-  frc::SmartDashboard::PutNumber("closed loop error", leftFlywheelTalon.GetClosedLoopError());
-  // std::cout << "gear ratio: " << std::to_string(gearRatio) << std::endl;
-  //drivetrain.TankDrive(0.3, 0.3, true);
-  
-  //std::printf("Basic move ton");
-  //autonStep = 1;
-  std::cout << "Auton Step is : " << std::to_string(autonStep) << std::endl;
-
-  runIntake(0.5);
-  
-  switch(autonStep)
-  {
-    case 1:
-      LinearMove(-84.75, 0.55);
-      break;
-     case 10:
-      AccelerateFlywheelDuringAuton(4500, 4.0);
-      break;
-    case 110:
-      RunBallManagement(0.5);
-      break;
-    // case 220:
-    //   RunBallManagement(0);
-    //   break;
-    // case 350:
-    //   RunBallManagement(0.5);
-    // break;
-    default:
-      autonStep++;
-      break;
-  }
-  return;
-}
-
-void Robot::runIntake(double speed)
-{
-  intakeOutput = speed * intakeMaximum;
-  intakeMotor.Set(VictorSPXControlMode::PercentOutput, -intakeOutput);
-  frc::SmartDashboard::PutNumber("Intake Output", intakeOutput);
-
-  leftSolenoid.Set(true);
-  rightSolenoid.Set(true);
-  frc::SmartDashboard::PutBoolean("Intake Extended", true);
-}
-
 void Robot::AccelerateFlywheelDuringAuton(int speed, double ratio)
 {
   leftFlywheelTalon.Set(TalonFXControlMode::Velocity, speed);
@@ -589,14 +631,6 @@ void Robot::AccelerateFlywheelDuringAuton(int speed, double ratio)
 
   autonStep++;
   std::cout << std::to_string(leftFlywheelTalon.GetClosedLoopError()) << std::endl;
-}
-
-void Robot::RunBallManagement(double speed)
-{
-  leftVictor.Set(VictorSPXControlMode::PercentOutput, speed);
-  middleVictor.Set(VictorSPXControlMode::PercentOutput, -speed);
-  rightVictor.SetInverted(true);
-  rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
 }
 
 void Robot::LinearMove(double distance, double motorSpeed)
@@ -622,10 +656,10 @@ void Robot::LinearMove(double distance, double motorSpeed)
 
 
 
-  int direction;
+  // int direction;
   //here
   //std::printf("in the function");
-  direction = distance / abs(distance);
+  int direction = distance / abs(distance);
 
   // std::cout << ((std::to_string(motorFLEncoder.GetPosition()) + std::to_string(motorFLEncoderTarget) +
   //         std::to_string(motorFREncoder.GetPosition()) +std::to_string( motorFREncoderTarget) )) << std::endl;
@@ -719,6 +753,7 @@ double Robot::InchesToEncoderTicks(double inches)
   double c = WheelRadiusInches * PI * 2;
   return ((inches / c) * gearRatio); 
 }
+
 double Robot::EncoderTicksToInches(double ticks, double TicksPerRev)
 {
   double c = WheelRadiusInches * PI * 2;

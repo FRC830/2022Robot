@@ -21,17 +21,13 @@
 #include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
 #include <ctre/phoenix/motorcontrol/can/TalonFX.h>
 #include <ctre/phoenix/motorcontrol/can/VictorSPX.h>
-
-
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/shuffleboard/ShuffleboardTab.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
-
 #include <cameraserver/CameraServer.h>
 
 #define PI 3.14159265
-
 
 const double deadZoneLimit = 0.05; 
 
@@ -49,14 +45,10 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
   //Handle spam below
   void HandleDrivetrain();
-  //General util stuff
   void HandleShooter();
-  void PlaceShuffleboardTiles();
-  void GetTeleopShuffleBoardValues();
-  void GetRobotShuffleoardValues();
-  void GetControllerInput();
   void HandleIntake();
   void HandleBallManagement();
+  //General util stuff
   double Deadzone(double pilotStickY);
   double Avg(double val1, double val2);
   double EncoderTicksToInches(double ticks, double TicksPerRev);
@@ -64,6 +56,12 @@ class Robot : public frc::TimedRobot {
   double EncoderTicksToInches(double ticks);
   double InchesToEncoderTicks(double inches);
   double DegreesToInches(double degrees);
+  // smartdash board stuff
+  void PlaceShuffleboardTiles();
+  void GetTeleopShuffleBoardValues();
+  void GetRobotShuffleoardValues();
+  void GetControllerInput();
+
   //Auton functions... for auton...
   void LinearMove(double distance, double motorSpeed);
   void CenterPointTurn(double degrees, double motorSpeed);
@@ -71,10 +69,10 @@ class Robot : public frc::TimedRobot {
   void CompoundMove(double distance, double degrees, double motorSpeed);
   void AccelerateFlywheelDuringAuton(int speed, double ratio);
   void RunBallManagement(double speed);
-  void runIntake(double speed);
+  void RunIntake(double speed);
   //Auton Comb...
   void Taxi();
-  void BackupAndShootAuton();
+  void TwoBallAuton();
   void TestAuton();
 
 
@@ -190,8 +188,8 @@ class Robot : public frc::TimedRobot {
 
 
   //THIS is in the wrong spot
-const int TIMERLENGTH = 25;
-int shootStablizer=0;
+  const int TIMERLENGTH = 25;
+  int shootStablizer=0;
 
   /*
   #2 Shooter
