@@ -5,6 +5,7 @@
 #include "Robot.h"
 #include <iostream>
 #include <math.h>
+#include <tuple>
 
 
 using namespace std;
@@ -225,9 +226,10 @@ void Robot::HandleDrivetrain() {
   }
 }
 
-void Robot::HandleShooter(){
-  int dist = frc::SmartDashboard::GetNumber("Shuffleboard/vision/distance",180);
-  double ratio = frc::SmartDashboard::GetNumber("ratio backspin to flywheel",3.6);
+std::tuple < double , double > Robot::CalculateShot()
+{
+  static int dist = visionTab -> GetNumber("distance", 180);
+  double ratio = visionTab -> GetNumber("ratio backspin to flywheel",3.6);
 
 
   longSHOTHANGER = copilot.GetYButton();
@@ -251,8 +253,16 @@ void Robot::HandleShooter(){
     ratio=targetRatio;
 
     double targetSpeed=((speedMap[distances[indexabove]] - speedMap[distances[indexbelow]])*proportionBetweenDistancePoints)+speedMap[distances[indexbelow]];
-    shooterMaximum=targetSpeed;
+    return std::make_tuple(targetSpeed, ratio);
   }
+  else 
+  {
+    return std::make_tuple(-1, -1);
+  }
+  
+}
+
+void Robot::HandleShooter(){
   
 
   // shooterOutput = ((copilot.GetRightTriggerAxis("noS") > 0.6) && !(copilot.GetLeftTriggerAxis("noS") > 0.6)) ? shooterMaximum : shooterMaximum;
@@ -313,11 +323,13 @@ void Robot::HandleShooter(){
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
   shooterOutput = longSHOTHANGER ? shooterHANGER-Deadzone(shooterHANGER-shooterOutput) : shooterMaximum - Deadzone(shooterMaximum - shooterOutput);
 
+  std::tuple shotParams = CalculateShot();
+  
   if (shooterOutput > 200)
   {
-    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, shooterOutput);
+    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, std::get<1>(shotParams));
     rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-    backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput * ratio);
+    backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput * std::get<0>(shotParams));
     rightFlywheelTalon.SetInverted(true);
     backSpinTalon.SetInverted(true);
   }

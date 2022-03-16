@@ -77,22 +77,30 @@ class Robot : public frc::TimedRobot {
   void BackupAndShootAuton();
   void TestAuton();
 
+  std::tuple < double , double > CalculateShot();
 
-  std::map<int, double> ratioMap = {{60, 0.8},
-                                     {90, 0.6},
-                                     {180, 0.6},
-                                     {270, 0.6}};
-  std::map<int, double> speedMap = {{60, 8750},
-                                     {90, 11500},
-                                     {180, 12500},
-                                     {270, 14800}};
 
-  std::array<int, 4> distances =
+  std::map<int, double> ratioMap = {{44,	4},
+                                     {74,	4.25},
+                                     {87,	4.5},
+                                     {103, 4.75},
+                                     {116,	5.4},
+                                     {130,	6}};
+  std::map<int, double> speedMap = {{44,	4000},
+                                     {74,	4000},
+                                     {87,	4000},
+                                     {103, 4500},
+                                     {116,	4750},
+                                     {130,	5250}};
+
+  std::array<int, 6> distances =
   {
-    60,
-    90,
-    180,
-    270
+    44,
+    74,
+    87,
+    103,
+    116,
+    130
   };
 
   /*=============
