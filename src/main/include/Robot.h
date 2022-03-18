@@ -113,7 +113,31 @@ class Robot : public frc::TimedRobot {
   rev::SparkMaxRelativeEncoder motorBLEncoder = motorBL.GetEncoder();
   rev::SparkMaxRelativeEncoder motorBREncoder = motorBR.GetEncoder();
 
+  // Mini Auton Section
   int autonMode;
+  frc::SendableChooser<std::string> autonChooser;
+  std::string stayAuton = "Stay Still Auton";
+  // std::string stayLowAuton = "Stay Still Low Goal Auton";
+  std::string oneBallLeftAuton = "One Ball (Left) Auton";
+  std::string oneBallRightAuton = "One Ball (Right) Auton";
+  std::string twoBallLeftAuton = "Two Ball (Left) Auton"; 
+  std::string twoBallRightAuton = "Two Ball (Right) Auton"; 
+  std::string oneBallLineLeftAuton = "One Ball Line Start (Left) Auton";
+  std::string oneBallLineRightAuton = "One Ball Line Start (Right) Auton";
+  // std::string threeBallAuton = "Three Ball Auton";
+
+  /*
+    Description of each Auton: 
+    0 - stay still
+    1 - ?? stay still + low goal shot
+    2 - back up and shoot left tarmac
+    3 - back up and shoot right tarmac
+    4 - back up intake and shoot left tarmac
+    5 - back up intake and shoot right tarmac
+    6 - line start back up and shoot left tarmac
+    7 - line start back up and shoot right tarmac
+    8 - ?? 3 ball auton
+  */
 
   // Xbox controller object contruct, does not contain correct port, pilot goes in 0 copilot goes in 1
   ModifiableController pilot = ModifiableController(0);

@@ -20,6 +20,15 @@ void Robot::RobotInit() {
   // motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   // motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   // motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+  // Initial Auton Modes
+  autonChooser.SetDefaultOption(stayAuton, stayAuton);
+  autonChooser.AddOption(oneBallLeftAuton, oneBallLeftAuton);
+  autonChooser.AddOption(oneBallRightAuton, oneBallRightAuton);
+  autonChooser.AddOption(twoBallLeftAuton, twoBallLeftAuton);
+  autonChooser.AddOption(twoBallRightAuton, twoBallRightAuton);
+  autonChooser.AddOption(oneBallLineLeftAuton, oneBallLineLeftAuton);
+  autonChooser.AddOption(oneBallLineRightAuton, oneBallLineRightAuton);
 }
 
 /*
@@ -108,6 +117,33 @@ void Robot::AutonomousPeriodic() {
        Taxi(); 
        break;
   }
+
+  // New Auton Selection with Sendable Chooser:
+
+  std::string currentAutonMode = autonChooser.GetSelected();
+  if (currentAutonMode == stayAuton){
+
+  }
+  else if (currentAutonMode == oneBallLineLeftAuton){
+
+  }
+  else if (currentAutonMode == oneBallRightAuton){
+
+  }
+  else if (currentAutonMode == twoBallLeftAuton){
+
+  }
+  else if (currentAutonMode == twoBallRightAuton){
+    
+  }
+  else if (currentAutonMode == oneBallLineLeftAuton){
+
+  }
+  else if (currentAutonMode == oneBallLineRightAuton){
+    
+  }
+
+
 }
 
 
@@ -472,6 +508,8 @@ void Robot::PlaceShuffleboardTiles()
   frc::SmartDashboard::PutNumber("Intake Output", 0);
   frc::SmartDashboard::PutBoolean("Intake Extended", false);
   frc::SmartDashboard::PutBoolean("GET Y BUTTON", false);
+
+  frc::SmartDashboard::PutData("Auton Modes", &autonChooser);
 }
 
 void Robot::GetTeleopShuffleBoardValues()
