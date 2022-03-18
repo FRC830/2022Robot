@@ -77,7 +77,7 @@ class Robot : public frc::TimedRobot {
   void BackupAndShootAuton();
   void TestAuton();
 
-  std::tuple < double , double > CalculateShot();
+ bool CalculateShot();
 
 
   std::map<int, double> ratioMap = {{44,	4},
@@ -251,6 +251,9 @@ int shootStablizer=0;
   bool intakeExtended = false;
   float intakeMaximum = 1.0;
   double intakeOutput = 0;
+
+  double correctSpeed;
+  double correctRatio;
 
 
 };

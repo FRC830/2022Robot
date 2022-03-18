@@ -226,120 +226,77 @@ void Robot::HandleDrivetrain() {
   }
 }
 
-std::tuple < double , double > Robot::CalculateShot()
+bool Robot::CalculateShot()
 {
   static int dist = visionTab -> GetNumber("distance", 180);
-  double ratio = visionTab -> GetNumber("ratio backspin to flywheel",3.6);
+  
 
-
-  longSHOTHANGER = copilot.GetYButton();
-  frc::SmartDashboard::PutBoolean("GET Y BUTTON", longSHOTHANGER);
+  frc::SmartDashboard::PutNumber("C++ thinks python dist is", dist);
 
   //index is the index of the distance data point right above, -1 if its above everything
   int index=-1;
   for(int i =0; i< distances.size(); i++){
-    if (dist<distances[i]){
+    if (dist > distances[i]){
       index=i;
       break;
     }
 
   }
-  if(index !=-1 && index ==0){
-    int indexabove=index;
+  if(index != -1){
     int indexbelow=index;
+    int indexabove=index + 1;
 
-    double proportionBetweenDistancePoints=(dist-distances[indexbelow])/(distances[indexabove]-distances[indexbelow]);
+    double distanceFromFloor = dist-distances[indexbelow];
+    double ceil = distances[indexabove];
+    double floor = distances[indexbelow];
+    
+    double proportionBetweenDistancePoints=(distanceFromFloor)/(distances[indexabove]-distances[indexbelow]);
+    //double proportionBetweenDistancePoints=(14)/(distances[indexabove]-distances[indexbelow]);
+
+
     double targetRatio=((ratioMap[distances[indexabove]] - ratioMap[distances[indexbelow]])*proportionBetweenDistancePoints)+ratioMap[distances[indexbelow]];
-    ratio=targetRatio;
 
     double targetSpeed=((speedMap[distances[indexabove]] - speedMap[distances[indexbelow]])*proportionBetweenDistancePoints)+speedMap[distances[indexbelow]];
-    return std::make_tuple(targetSpeed, ratio);
+    
+    frc::SmartDashboard::PutNumber("proportionBetweenDistancePoints", proportionBetweenDistancePoints);
+    frc::SmartDashboard::PutNumber("at 2", distances[1]);
+    frc::SmartDashboard::PutNumber("distanceFromFloor", distanceFromFloor);
+    frc::SmartDashboard::PutNumber("vision shooter speed", targetSpeed);
+    frc::SmartDashboard::PutNumber("vision shooter ratio", targetRatio);
+    frc::SmartDashboard::PutNumber("ceil", distances[indexabove]);
+    frc::SmartDashboard::PutNumber("floor", distances[indexbelow]);
+    
+    correctSpeed = targetSpeed;
+    correctRatio = targetRatio;
+
+    return true;
   }
   else 
   {
-    return std::make_tuple(-1, -1);
+    return false;
   }
   
 }
 
 void Robot::HandleShooter(){
-  
-
-  // shooterOutput = ((copilot.GetRightTriggerAxis("noS") > 0.6) && !(copilot.GetLeftTriggerAxis("noS") > 0.6)) ? shooterMaximum : shooterMaximum;
-  // shooterOutput = shooterOutput == 0 && (copilot.GetLeftTriggerAxis("noS")) ? shooterMaximum * -0.5 : 0;
-
-  //shooterOutput = ((copilot.GetRightTriggerAxis("noS") > 0.6) && !(copilot.GetLeftTriggerAxis("noS") > 0.6)) ? shooterMaximum * 1 : shooterOutput;
-  //shooterOutput = copilot.GetLeftTriggerAxis("nos") > 0.6 && !copilot.GetRightTriggerAxis("noS") > 0.6 ? shooterOutput * -0.5 : shooterOutput; 
-  //shooterOutput = !copilot.GetLeftTriggerAxis("nos") > 0.6 && !copilot.GetRightTriggerAxis("noS") > 0.6 ? shooterOutput : 0;
-
-  //comment out
-  //static bool lastCopilotRightTrigger = false;
-  static bool risingEdgeFound = false;
-
-  if (copilot.GetRightTriggerAxis("noS") <= 0.6)
-  {
-    //lastCopilotRightTrigger = true;
-    // if (shooterOutput!=shooterMaximum && !risingEdgeFound){
-    //   //call on the rising edge
-    //   risingEdgeFound = true;
-    shootStablizer = TIMERLENGTH;
-    std::cout << "stopped" << std::endl;
-    //   std::cout << shooterOutput << "," << shooterMaximum << std::endl;
-    // }
-    //shooterOutput = shooterMaximum;
-    
-  }
-
-
-
-  // if ((copilot.GetRightTriggerAxis("noS") > 0.6) && (copilot.GetLeftTriggerAxis("noS") > 0.6))
-  // {
-
-  // }
-  if (copilot.GetRightTriggerAxis("noS") > 0.6 && !longSHOTHANGER) 
-  {
-    //lastCopilotRightTrigger = true;
-    // if (shooterOutput!=shooterMaximum && !risingEdgeFound){
-    //   //call on the rising edge
-    //   risingEdgeFound = true;
-    //   shootStablizer = 20;
-    //   std::cout << shooterOutput << "," << shooterMaximum << std::endl;
-    // }
-    shooterOutput = shooterMaximum;
-    
-  }
-  // else if (copilot.GetLeftTriggerAxis("noS") > 0.6)
-  // {
-  //   shooterMaximum = shooterMaximum * -0.5;
-  // }
-  else if (longSHOTHANGER && copilot.GetRightTriggerAxis("nos") > 0.6) {
-    shooterOutput = shooterHANGER;
-  }
-  if (copilot.GetLeftTriggerAxis("noS") < 0.2)
-  {
-    risingEdgeFound = false;
-  }
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
-  shooterOutput = longSHOTHANGER ? shooterHANGER-Deadzone(shooterHANGER-shooterOutput) : shooterMaximum - Deadzone(shooterMaximum - shooterOutput);
+  bool shotSuccess = CalculateShot();
+  shooterOutput = (copilot.GetRightTriggerAxis("noS") > 0.2 && shotSuccess) ? 1 : 0;
 
-  std::tuple shotParams = CalculateShot();
+  //std::tuple shotParams = ;
+
+  //cout << std::get<0>(shotParams) << endl;
+
+  // frc::SmartDashboard::PutNumber("vision shooter speed", correctSpeed);
+  // frc::SmartDashboard::PutNumber("vision shooter ratio", correctRatio);
+
   
-  if (shooterOutput > 200)
-  {
-    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, std::get<1>(shotParams));
-    rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-    backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput * std::get<0>(shotParams));
-    rightFlywheelTalon.SetInverted(true);
-    backSpinTalon.SetInverted(true);
-  }
-  else {
-    leftFlywheelTalon.Set(TalonFXControlMode::PercentOutput, 0);
-    rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-    backSpinTalon.Set(TalonFXControlMode::PercentOutput, 0);
-    rightFlywheelTalon.SetInverted(true);
-    backSpinTalon.SetInverted(true);
-  }
+  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, correctSpeed * shooterOutput);
+  rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+  backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput * correctSpeed * correctRatio);
+  rightFlywheelTalon.SetInverted(true);
+  backSpinTalon.SetInverted(true);
   
 
   frc::SmartDashboard::PutNumber("closed loop error", leftFlywheelTalon.GetClosedLoopError());
