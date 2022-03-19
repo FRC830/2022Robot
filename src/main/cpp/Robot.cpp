@@ -309,6 +309,25 @@ void Robot::HandleShooter(){
     rightFlywheelTalon.SetInverted(true);
     backSpinTalon.SetInverted(true);
   }
+  //long shot
+  else if (copilot.GetYButton())
+  {
+    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, 5000);
+    rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+    backSpinTalon.Set(TalonFXControlMode::Velocity, 5000 * 7.5);
+    rightFlywheelTalon.SetInverted(true);
+    backSpinTalon.SetInverted(true);
+  }
+  //eject
+  else if (copilot.GetRightBumper())
+  {
+    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, 2000);
+    rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+    backSpinTalon.Set(TalonFXControlMode::Velocity, 3000);
+    rightFlywheelTalon.SetInverted(true);
+    backSpinTalon.SetInverted(true);
+  }
+  //vision shot
   else if (copilot.GetRightTriggerAxis("noS") > 0.2 && shotSuccess){
   leftFlywheelTalon.Set(TalonFXControlMode::Velocity, correctSpeed);
   rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
@@ -317,7 +336,8 @@ void Robot::HandleShooter(){
   backSpinTalon.SetInverted(true);
 
   }
-  else if (shotSuccess)
+  //no shot
+  else
   {
     leftFlywheelTalon.Set(TalonFXControlMode::PercentOutput, 0);
     rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
