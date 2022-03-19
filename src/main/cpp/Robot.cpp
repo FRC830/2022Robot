@@ -228,21 +228,24 @@ void Robot::HandleDrivetrain() {
 
 bool Robot::CalculateShot()
 {
-  static int dist = visionTab -> GetNumber("distance", 180);
+  int dist = visionTab -> GetNumber("distance", 180);
   
 
   frc::SmartDashboard::PutNumber("C++ thinks python dist is", dist);
 
-  //index is the index of the distance data point right above, -1 if its above everything
-  int index=-1;
+  //index is the index of the 
+  //
+  //distance data point right above, -1 if its above everything
+  int index=-2;
   for(int i =0; i< distances.size(); i++){
-    if (dist > distances[i]){
-      index=i;
+    if (dist < distances[i]){
+      index=i-1;
       break;
     }
 
   }
-  if(index != -1){
+
+  if(index >=0 && index < distances.size()-1){
     int indexbelow=index;
     int indexabove=index + 1;
 
@@ -271,7 +274,14 @@ bool Robot::CalculateShot()
 
     return true;
   }
-  else 
+  else if (index==distances.size()-1)
+  {
+    return false;
+  }
+  else if(index==-1)
+  {
+    return false;
+  } else 
   {
     return false;
   }
@@ -282,7 +292,6 @@ void Robot::HandleShooter(){
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
   bool shotSuccess = CalculateShot();
-  shooterOutput = (copilot.GetRightTriggerAxis("noS") > 0.2 && shotSuccess) ? 1 : 0;
 
   //std::tuple shotParams = ;
 
@@ -291,12 +300,31 @@ void Robot::HandleShooter(){
   // frc::SmartDashboard::PutNumber("vision shooter speed", correctSpeed);
   // frc::SmartDashboard::PutNumber("vision shooter ratio", correctRatio);
 
-  
-  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, correctSpeed * shooterOutput);
+  //static shot
+  if (copilot.GetLeftTriggerAxis("noS") > 0.2)
+  {
+    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, frc::SmartDashboard::GetNumber("Shooter Maximum", 4700));
+    rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+    backSpinTalon.Set(TalonFXControlMode::Velocity, frc::SmartDashboard::GetNumber("Shooter Maximum", 4700) * frc::SmartDashboard::GetNumber("ratio backspin to flywheel", 1));
+    rightFlywheelTalon.SetInverted(true);
+    backSpinTalon.SetInverted(true);
+  }
+  else if (copilot.GetRightTriggerAxis("noS") > 0.2 && shotSuccess){
+  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, correctSpeed);
   rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-  backSpinTalon.Set(TalonFXControlMode::Velocity, shooterOutput * correctSpeed * correctRatio);
+  backSpinTalon.Set(TalonFXControlMode::Velocity, correctSpeed * correctRatio);
   rightFlywheelTalon.SetInverted(true);
   backSpinTalon.SetInverted(true);
+
+  }
+  else if (shotSuccess)
+  {
+    leftFlywheelTalon.Set(TalonFXControlMode::PercentOutput, 0);
+    rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+    backSpinTalon.Set(TalonFXControlMode::PercentOutput, 0);
+    rightFlywheelTalon.SetInverted(true);
+    backSpinTalon.SetInverted(true);
+  }
   
 
   frc::SmartDashboard::PutNumber("closed loop error", leftFlywheelTalon.GetClosedLoopError());
