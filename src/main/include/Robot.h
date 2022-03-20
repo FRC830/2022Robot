@@ -40,6 +40,7 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
   //Handle spam below
   void HandleDrivetrain();
+  void HandleClimber();
   //General util stuff
   void PlaceShuffleboardTiles();
   void GetTeleopShuffleBoardValues();
@@ -82,6 +83,8 @@ class Robot : public frc::TimedRobot {
   rev::SparkMaxRelativeEncoder motorFREncoder = motorFR.GetEncoder();
   rev::SparkMaxRelativeEncoder motorBLEncoder = motorBL.GetEncoder();
   rev::SparkMaxRelativeEncoder motorBREncoder = motorBR.GetEncoder();
+
+  rev::CANSparkMax climber = rev::CANSparkMax(5, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
 
   int autonMode;
 
@@ -133,6 +136,9 @@ class Robot : public frc::TimedRobot {
   bool autonMovingMotor = false;
 
   int autonStep = 1;
+
+  //this is a countdown to estimate the time unitl climber is fully extended it counts down 50 every second
+  int climberCountdown = 200;
 
 
   bool newAutonCall = true;

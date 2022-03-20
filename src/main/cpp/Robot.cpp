@@ -143,6 +143,28 @@ void Robot::TeleopPeriodic() {
   }
   GetTeleopShuffleBoardValues();
   HandleDrivetrain();
+  HandleClimber();
+}
+
+void Robot::HandleClimber(){
+  if (copilot.GetLeftY("OG") > 0.5 && climberCountdown >0 )
+  {
+    climber.Set(-0.3);
+  }
+  else if (copilot.GetLeftY("OG") < -0.5)
+  {
+    climber.Set(-0.3);
+  } 
+  else if (copilot.GetStartButton())
+  {
+    ////////////////////////scary/reverse////////////////////////////////
+    ////////////DONT PRESS THIS UNLESS THE WHINCH IS DISABLED////////////
+    /////////////////////////////////////////////////////////////////////
+    climber.Set(0.3);
+  } 
+  else{
+    climber.Set(0.0);
+  }
 }
 
 void Robot::DisabledInit() {
