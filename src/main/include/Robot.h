@@ -6,6 +6,7 @@
 
 #include <ModifiableController.h>
 #include <rev/CANSparkMax.h>
+#include <frc/TimedRobot.h>
 #include "ctre/Phoenix.h"
 #include <string>
 #include <fmt/core.h>
@@ -78,6 +79,7 @@ class Robot : public frc::TimedRobot {
   void TestAuton();
 
 
+
   std::map<int, double> ratioMap = {{60, 0.8},
                                      {90, 0.6},
                                      {180, 0.6},
@@ -114,29 +116,34 @@ class Robot : public frc::TimedRobot {
   rev::SparkMaxRelativeEncoder motorBREncoder = motorBR.GetEncoder();
 
   // Mini Auton Section
-  int autonMode;
   frc::SendableChooser<std::string> autonChooser;
-  std::string stayAuton = "Stay Still Auton";
-  // std::string stayLowAuton = "Stay Still Low Goal Auton";
-  std::string oneBallLeftAuton = "One Ball (Left) Auton";
-  std::string oneBallRightAuton = "One Ball (Right) Auton";
-  std::string twoBallLeftAuton = "Two Ball (Left) Auton"; 
-  std::string twoBallRightAuton = "Two Ball (Right) Auton"; 
-  std::string oneBallLineLeftAuton = "One Ball Line Start (Left) Auton";
-  std::string oneBallLineRightAuton = "One Ball Line Start (Right) Auton";
+  std::string stayAuton = "0) Do Nothing";
+  std::string taxiAuton = "1) Taxi Auton";
+  std::string stayLowAuton = "2) Do Nothing Low Goal Auton";
+  std::string stayLowTaxiAuton = "3) Low goal shot + taxi";
+  std::string oneBallAuton = "4) One Ball Auton";
+  std::string twoBallLeftAuton = "5) Two Ball (Left) Auton";
+  std::string twoBallMiddleAuton = "6) Two Ball (Middle) Auton";
+  std::string twoBallRightAuton = "7) Two Ball (Right) Auton"; 
+  std::string twoBallLineLeftAuton = "8) Two Ball Line Start (Left) Auton";
+  std::string twoBallLineRightAuton = "9) Two Ball Line Start (Right) Auton";
+  std::string twoBallLineMiddleAuton = "10) Two Ball Line Start (Middle) Auton";
+  std::string mysteryMode = "11) Mystery Mode";
+
   // std::string threeBallAuton = "Three Ball Auton";
 
   /*
     Description of each Auton: 
-    0 - stay still
+    0 - stay still ✅
     1 - ?? stay still + low goal shot
     2 - back up and shoot left tarmac
     3 - back up and shoot right tarmac
-    4 - back up intake and shoot left tarmac
-    5 - back up intake and shoot right tarmac
-    6 - line start back up and shoot left tarmac
-    7 - line start back up and shoot right tarmac
-    8 - ?? 3 ball auton
+    4 - back up intake and shoot left tarmac ✅
+    5 - back up intake and shoot middle tarmac ✅
+    6 - back up intake and shoot right tarmac ✅
+    7 - line start back up and shoot left tarmac
+    8 - line start back up and shoot right tarmac
+    9 - ?? 3 ball auton
   */
 
   // Xbox controller object contruct, does not contain correct port, pilot goes in 0 copilot goes in 1
@@ -183,6 +190,8 @@ class Robot : public frc::TimedRobot {
   
     
 
+
+
   /*=============
   Constant Values
   =============*/
@@ -225,7 +234,6 @@ int shootStablizer=0;
   float shooterHANGER = 0.5; 
   double shooterOutput = 0;
 
-  bool longSHOTHANGER = false; 
 
   /*
   #3 Ball Management
@@ -245,7 +253,10 @@ int shootStablizer=0;
   bool autonMovingMotor = false;
 
   int autonStep = 1;
+  
+  // int auton_Wait = 0; 
 
+  // bool auton_isWaiting = false;
 
   bool newAutonCall = true;
 
