@@ -78,23 +78,33 @@ class Robot : public frc::TimedRobot {
   void BackupAndShootAuton();
   void TestAuton();
 
+ bool CalculateShot();
 
 
-  std::map<int, double> ratioMap = {{60, 0.8},
-                                     {90, 0.6},
-                                     {180, 0.6},
-                                     {270, 0.6}};
-  std::map<int, double> speedMap = {{60, 8750},
-                                     {90, 11500},
-                                     {180, 12500},
-                                     {270, 14800}};
+  std::map<int, double> ratioMap = {{89,	4},
+                                     {111,	4.25},
+                                     {134,	4.5},
+                                     {156, 4.75},
+                                     {172,	5.4},
+                                     {188,	6},
+                                     {207,	7}};
+  std::map<int, double> speedMap = {{89,	4000},
+                                     {111,	4000},
+                                     {134,	4000},
+                                     {156, 4500},
+                                     {172,	4750},
+                                     {188,	5250},
+                                     {207,	5000}};
 
-  std::array<int, 4> distances =
+  std::array<int, 7> distances =
   {
-    60,
-    90,
-    180,
-    270
+    89,
+    111,
+    134,
+    156,
+    172,
+    188,
+    207
   };
 
   /*=============
@@ -278,6 +288,9 @@ int shootStablizer=0;
   bool intakeExtended = false;
   float intakeMaximum = 1.0;
   double intakeOutput = 0;
+
+  double correctSpeed;
+  double correctRatio;
 
 
 };
