@@ -90,63 +90,6 @@ void Robot::AutonomousInit() {
   
 }
 
-void Robot::AutonomousPeriodic() {
-
-  if (firstCallToAuton)
-  {
-    firstCallToAuton = false;
-    return;
-  }
-
-  std::cout << "BR Encoder " << motorFLEncoder.GetPosition() << std::endl;
-  std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
-  std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
-  std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
-
-   switch(autonMode) {
-     case 1:
-       Taxi(); 
-       break;
-     case 2:
-       BackupAndShootAuton();
-       break; 
-     case 3:
-       TestAuton();
-       break; 
-     default:
-       Taxi(); 
-       break;
-  }
-
-  // New Auton Selection with Sendable Chooser:
-
-  std::string currentAutonMode = autonChooser.GetSelected();
-  if (currentAutonMode == stayAuton){
-
-  }
-  else if (currentAutonMode == oneBallLineLeftAuton){
-
-  }
-  else if (currentAutonMode == oneBallRightAuton){
-
-  }
-  else if (currentAutonMode == twoBallLeftAuton){
-
-  }
-  else if (currentAutonMode == twoBallRightAuton){
-    
-  }
-  else if (currentAutonMode == oneBallLineLeftAuton){
-
-  }
-  else if (currentAutonMode == oneBallLineRightAuton){
-    
-  }
-
-
-}
-
-
 void Robot::TeleopInit() {
   
   GetTeleopShuffleBoardValues();
@@ -777,6 +720,69 @@ double Robot::DegreesToInches(double degrees)
   return (RobotC * radialPortion);
 }
 
+
+void Robot::AutonomousPeriodic() {
+
+  if (firstCallToAuton)
+  {
+    firstCallToAuton = false;
+    return;
+  }
+
+  std::cout << "BR Encoder " << motorFLEncoder.GetPosition() << std::endl;
+  std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
+  std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
+  std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
+
+   switch(autonMode) {
+     case 1:
+       Taxi(); 
+       break;
+     case 2:
+       BackupAndShootAuton();
+       break; 
+     case 3:
+       TestAuton();
+       break; 
+     default:
+       Taxi(); 
+       break;
+  }
+
+  // New Auton Selection with Sendable Chooser:
+
+  std::string currentAutonMode = autonChooser.GetSelected();
+  if (currentAutonMode == stayAuton){
+
+  }
+  else if (currentAutonMode == oneBallLineLeftAuton){
+
+  }
+  else if (currentAutonMode == oneBallRightAuton){
+
+  }
+  else if (currentAutonMode == twoBallLeftAuton){
+
+  }
+  else if (currentAutonMode == twoBallRightAuton){
+    
+  }
+  else if (currentAutonMode == oneBallLineLeftAuton){
+
+  }
+  else if (currentAutonMode == oneBallLineRightAuton){
+    
+  }
+
+
+}
+
+
+void Robot::Wait_Auton(int seconds) {
+
+    
+
+}
 
 #ifndef RUNNING_FRC_TESTS
 int main() {
