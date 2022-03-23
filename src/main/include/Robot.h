@@ -73,6 +73,7 @@ class Robot : public frc::TimedRobot {
   void AccelerateFlywheelDuringAuton(int speed, double ratio);
   void RunBallManagement(double speed);
   void runIntake(double speed);
+  void Wait_Auton(int seconds);
   //Auton Comb...
   void Taxi();
   void BackupAndShootAuton();
@@ -138,12 +139,12 @@ class Robot : public frc::TimedRobot {
     1 - ?? stay still + low goal shot
     2 - back up and shoot left tarmac
     3 - back up and shoot right tarmac
-    4 - back up intake and shoot left tarmac ✅
-    5 - back up intake and shoot middle tarmac ✅
-    6 - back up intake and shoot right tarmac ✅
-    7 - line start back up and shoot left tarmac
-    8 - line start back up and shoot right tarmac
-    9 - ?? 3 ball auton
+    4 - back up intake and shoot left tarmac
+    5 - back up intake and shoot right tarmac
+    6 - line start back up and shoot left tarmac
+    7 - line start back up and shoot right tarmac
+    8 - ?? 3 ball auton
+    99 - XXXXX
   */
 
   // Xbox controller object contruct, does not contain correct port, pilot goes in 0 copilot goes in 1
@@ -257,6 +258,9 @@ int shootStablizer=0;
   // int auton_Wait = 0; 
 
   // bool auton_isWaiting = false;
+
+  int waitCounter = 0;
+  bool isWait_Auton = false; 
 
   bool newAutonCall = true;
 

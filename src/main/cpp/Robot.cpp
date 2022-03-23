@@ -90,241 +90,6 @@ void Robot::AutonomousInit() {
   
 }
 
-void Robot::AutonomousPeriodic() {
-
-  if (firstCallToAuton)
-  {
-    firstCallToAuton = false;
-    return;
-  }
-
-
-  // New Auton Selection with Sendable Chooser:
-
-  std::string currentAutonMode = autonChooser.GetSelected();
-
-  if (currentAutonMode == stayAuton){
-    //Does nothing
-  }
-
-  else if (currentAutonMode == taxiAuton){
-    switch (autonStep)
-    {
-      case 1:
-        LinearMove(-84.75, 0.55);
-      break;
-      case 200: 
-        std::printf("here here");
-          break;
-    default:
-      autonStep++;
-      break;
-    }
-  }
-  else if (currentAutonMode == stayLowAuton)
-  {
-    switch (autonStep)
-      {
-        case 1:
-          AccelerateFlywheelDuringAuton(3000, 2.5);
-          break;
-        case 110:
-          RunBallManagement(0.5);
-          break;
-      default:
-        autonStep++;
-        break;
-      }
-  }
-  else if (currentAutonMode == stayLowTaxiAuton)
-  {
-    switch (autonStep)
-      {
-        case 1:
-          AccelerateFlywheelDuringAuton(3000, 2.5);
-          break;
-        case 100:
-          RunBallManagement(0.5);
-          break;
-        case 150:
-          LinearMove(-84.75, 0.55);
-          break;
-      default:
-        autonStep++;
-        break;
-      }
-  }
-  else if (currentAutonMode == oneBallAuton){
-    switch (autonStep)
-    {
-    case 1:
-        LinearMove(-84.75, 0.55);
-      break;
-    case 2:
-        AccelerateFlywheelDuringAuton(4500, 4.0);
-      break;
-    case 200:
-        RunBallManagement(0.5);
-      break;
-    default:
-      autonStep++;
-      break;
-    }
-  }
-
-
-  else if (currentAutonMode == twoBallLeftAuton){
-  runIntake(0.9);
-
-  switch(autonStep)
-  {
-    case 1:
-      LinearMove(-84.75, 0.55);
-      break;
-    case 2:
-      AccelerateFlywheelDuringAuton(4500, 4.0);
-      break;
-    case 100:
-      RunBallManagement(0.5);
-      break;
-    default:
-      autonStep++;
-      break;
-  }
-}
-
-else if (currentAutonMode == twoBallMiddleAuton){
-    switch(autonStep)
-  {
-    case 1: 
-      autonStep++;
-    case 2:
-      LinearMove(-67.0, 0.55);
-      break;
-    case 3:
-      CenterPointTurn(115.0, 0.55);
-      break;
-    case 4:
-      runIntake(0.9);
-    case 5:
-      LinearMove(-29.0, 0.55);
-      break;
-    case 6:
-      CenterPointTurn(-60.0, 0.55);
-      break;
-    case 7: 
-      AccelerateFlywheelDuringAuton(4500, 4.0);
-      break;
-    case 140:
-      RunBallManagement(0.5);
-      break;
-    default:
-      autonStep++;
-      break;
-    }
-}
-
-else if (currentAutonMode == twoBallRightAuton){
-  if (autonStep > 10)
-  {
-    runIntake(0.5);
-  }
-
-  switch(autonStep)
-  {
-    case 1:
-      LinearMove(-80.75, 0.55);
-      break;
-     case 3:
-      AccelerateFlywheelDuringAuton(4500, 4.0);
-      break;
-    case 100:
-      RunBallManagement(0.5);
-      break;
-    default:
-      autonStep++;
-      break;
-  }
-}
-else if (currentAutonMode == twoBallLineLeftAuton){
-  if (autonStep > 10)
-  {
-    runIntake(0.5);
-  }
-
-  switch(autonStep)
-  {
-    case 1:
-      LinearMove(-41.0, 0.55);
-      break;
-     case 3:
-      AccelerateFlywheelDuringAuton(4500, 4.0);
-      break;
-    case 120:
-      RunBallManagement(0.5);
-      break;
-    default:
-      autonStep++;
-      break;
-  }
-}
-
-  else if (currentAutonMode == twoBallLineMiddleAuton){
-    if (autonStep >= 11)
-    {
-      runIntake(0.5);
-    }
-    switch(autonStep)
-    {
-      case 1: 
-        autonStep++;
-      case 2:
-        LinearMove(-55.0, 0.55);
-        break;
-       break;
-      case 4:
-        CenterPointTurn(-14.0, 0.55);
-        break;
-      case 5:
-        AccelerateFlywheelDuringAuton(4500, 4.0);
-        break;
-       break;
-      case 110:
-        RunBallManagement(0.5);
-        break;
-      default:
-        autonStep++;
-        break;
-      }
-  }
-
-  else if (currentAutonMode == twoBallLineRightAuton)
-  {
-    if (autonStep > 10)
-    {
-      runIntake(0.5);
-    }
-
-    switch(autonStep)
-    {
-      case 1:
-        LinearMove(-39.0, 0.55);
-        break;
-       break;
-      case 3:
-        AccelerateFlywheelDuringAuton(4500, 4.0);
-        break;
-      case 110:
-        RunBallManagement(0.5);
-        break;
-      default:
-        autonStep++;
-        break;
-    }
-  }
-}
-
-
 void Robot::TeleopInit() {
   
   GetTeleopShuffleBoardValues();
@@ -849,7 +614,68 @@ double Robot::DegreesToInches(double degrees)
 }
 
 
+void Robot::AutonomousPeriodic() {
 
+  if (firstCallToAuton)
+  {
+    firstCallToAuton = false;
+    return;
+  }
+
+  std::cout << "BR Encoder " << motorFLEncoder.GetPosition() << std::endl;
+  std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
+  std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
+  std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
+
+   switch(autonMode) {
+     case 1:
+       Taxi(); 
+       break;
+     case 2:
+       BackupAndShootAuton();
+       break; 
+     case 3:
+       TestAuton();
+       break; 
+     default:
+       Taxi(); 
+       break;
+  }
+
+  // New Auton Selection with Sendable Chooser:
+
+  std::string currentAutonMode = autonChooser.GetSelected();
+  if (currentAutonMode == stayAuton){
+
+  }
+  else if (currentAutonMode == oneBallLineLeftAuton){
+
+  }
+  else if (currentAutonMode == oneBallRightAuton){
+
+  }
+  else if (currentAutonMode == twoBallLeftAuton){
+
+  }
+  else if (currentAutonMode == twoBallRightAuton){
+    
+  }
+  else if (currentAutonMode == oneBallLineLeftAuton){
+
+  }
+  else if (currentAutonMode == oneBallLineRightAuton){
+    
+  }
+
+
+}
+
+
+void Robot::Wait_Auton(int seconds) {
+
+    
+
+}
 
 #ifndef RUNNING_FRC_TESTS
 int main() {
