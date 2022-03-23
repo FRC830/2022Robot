@@ -8,7 +8,6 @@
 #include <iostream>
 #include <math.h>
 
-
 using namespace std;
 
 void Robot::RobotInit() {
@@ -17,11 +16,6 @@ void Robot::RobotInit() {
   motorGroupLeft.SetInverted(true);
 
   frc::CameraServer::StartAutomaticCapture();
-
-  // motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  // motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  // motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-  // motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
   // Initial Auton Modes
   autonChooser.SetDefaultOption(stayAuton, stayAuton);
@@ -91,10 +85,8 @@ void Robot::AutonomousPeriodic() {
   if (firstCallToAuton)
   {
     firstCallToAuton = false;
-    return;
+    return; 
   }
-
-
   // New Auton Selection with Sendable Chooser:
 
   std::string currentAutonMode = autonChooser.GetSelected();
@@ -102,7 +94,6 @@ void Robot::AutonomousPeriodic() {
   if (currentAutonMode == stayAuton){
     //Does nothing
   }
-
   else if (currentAutonMode == taxiAuton){
     switch (autonStep)
     {
@@ -195,23 +186,23 @@ else if (currentAutonMode == twoBallMiddleAuton){
     case 1: 
       autonStep++;
     case 2:
-      LinearMove(-67.0, 0.55);
+      LinearMove(-67.0, 0.5);
       break;
     case 3:
-      CenterPointTurn(115.0, 0.55);
+      CenterPointTurn(135.0, 0.35);
       break;
     case 4:
       runIntake(0.9);
     case 5:
-      LinearMove(-29.0, 0.55);
+      LinearMove(-50.0, 0.5);
       break;
     case 6:
-      CenterPointTurn(-60.0, 0.55);
+      CenterPointTurn(-50.0, 0.35);
       break;
     case 7: 
       AccelerateFlywheelDuringAuton(4500, 4.0);
       break;
-    case 140:
+    case 100:
       RunBallManagement(0.5);
       break;
     default:
@@ -300,7 +291,6 @@ else if (currentAutonMode == twoBallLineLeftAuton){
     {
       runIntake(0.5);
     }
-
     switch(autonStep)
     {
       case 1:
@@ -322,7 +312,6 @@ else if (currentAutonMode == twoBallLineLeftAuton){
 
 
 void Robot::TeleopInit() {
-  
   GetTeleopShuffleBoardValues();
   pilot.setDeadzone();
   copilot.setDeadzone();
@@ -337,16 +326,11 @@ void Robot::TeleopInit() {
   motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
   }
-
-
-  
 }
 
 void Robot::TeleopPeriodic() {
   GetTeleopShuffleBoardValues();
-
   autoAligning = pilot.GetAButton();
   if (autoAligning) {
     //KEEP THESE TWO SEPERATE IF STATEMENTS!!! VERY IMPROTANT!!!
@@ -359,7 +343,6 @@ void Robot::TeleopPeriodic() {
   else {
     autoAligning = false;
   }
-
   HandleDrivetrain();
   HandleShooter();
   HandleBallManagement();
@@ -377,7 +360,6 @@ void Robot::DisabledInit() {
   motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
   motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
   motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
-
 }
 
 void Robot::DisabledPeriodic() {}
@@ -447,7 +429,6 @@ void Robot::GetRobotShuffleoardValues()
 void Robot::Taxi() {
   if (autonStep == 1) {
     LinearMove(-84.75, 0.5);
-
   }
 }
 

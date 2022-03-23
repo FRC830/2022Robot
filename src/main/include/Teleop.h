@@ -55,16 +55,14 @@ bool Robot::CalculateShot()
 
   frc::SmartDashboard::PutNumber("C++ thinks python dist is", dist);
 
-  //index is the index of the 
-  //
-  //distance data point right above, -1 if its above everything
+  // index is the index of the
+  // distance data point right above, -1 if its above everything
   int index=-2;
   for(int i =0; i< distances.size(); i++){
     if (dist < distances[i]){
       index=i-1;
       break;
     }
-
   }
 
   if(index >=0 && index < distances.size()-1){
@@ -121,7 +119,7 @@ void Robot::HandleShooter(){
   // frc::SmartDashboard::PutNumber("vision shooter speed", correctSpeed);
   // frc::SmartDashboard::PutNumber("vision shooter ratio", correctRatio);
 
-  //static shot
+  //static shot (short)
   if (copilot.GetLeftTriggerAxis("noS") > 0.2)
   {
     leftFlywheelTalon.Set(TalonFXControlMode::Velocity, frc::SmartDashboard::GetNumber("Shooter Maximum", 4700));
@@ -142,11 +140,12 @@ void Robot::HandleShooter(){
   //eject
   else if (copilot.GetRightBumper())
   {
-    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, 2000);
+    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, 3500);
     rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
     backSpinTalon.Set(TalonFXControlMode::Velocity, 3000);
     rightFlywheelTalon.SetInverted(true);
     backSpinTalon.SetInverted(true);
+
   }
   //vision shot
   else if (copilot.GetRightTriggerAxis("noS") > 0.2 && shotSuccess){
@@ -184,7 +183,7 @@ void Robot::HandleBallManagement(){
   // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
 
   // ballManageOutput = (copilot.GetAButton() && abs(leftFlywheelTalon.GetClosedLoopError() < 145)) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
-  ballManageOutput = (copilot.GetXButton() || (copilot.GetAButton() && (shootStablizer < 0 || shootStablizer == TIMERLENGTH))) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
+  ballManageOutput = (copilot.GetXButton() || (copilot.GetAButton() && (leftFlywheelTalon.GetClosedLoopError() < 100))) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
  
 
   bool ballManageReverse = copilot.GetBButton();
@@ -220,7 +219,7 @@ void Robot::HandleBallManagement(){
 void Robot::HandleIntake(){
 
   bool isIntaking = pilot.GetLeftTriggerAxis() > 0.2;
-  intakeOutput = int(isIntaking) * intakeMaximum;
+  intakeOutput = int(isIntaking) * 0.6;
   intakeMotor.Set(VictorSPXControlMode::PercentOutput, -intakeOutput);
   frc::SmartDashboard::PutNumber("Intake Output", intakeOutput);
 

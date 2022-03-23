@@ -3,8 +3,8 @@
 void Robot::runIntake(double speed)
 {
   intakeOutput = speed * intakeMaximum;
-  intakeMotor.Set(VictorSPXControlMode::PercentOutput, -intakeOutput);
-  frc::SmartDashboard::PutNumber("Intake Output", intakeOutput);
+  intakeMotor.Set(VictorSPXControlMode::PercentOutput, -0.9);
+  frc::SmartDashboard::PutNumber("Intake Output", 0.9);
 
   leftSolenoid.Set(true);
   rightSolenoid.Set(true);
@@ -50,9 +50,6 @@ void Robot::LinearMove(double distance, double motorSpeed)
     newAutonCall = false;
     std::cout << std::noboolalpha << newAutonCall << std::endl;
   }
-
-
-
 
   int direction;
   //here
