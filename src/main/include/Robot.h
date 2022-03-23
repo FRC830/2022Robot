@@ -50,6 +50,7 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
   //Handle spam below
   void HandleDrivetrain();
+  void HandleClimber();
   //General util stuff
   void HandleShooter();
   void PlaceShuffleboardTiles();
@@ -155,6 +156,9 @@ class Robot : public frc::TimedRobot {
     8 - line start back up and shoot right tarmac
     9 - ?? 3 ball auton
   */
+  rev::CANSparkMax climber = rev::CANSparkMax(5, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
+
+  int autonMode;
 
   // Xbox controller object contruct, does not contain correct port, pilot goes in 0 copilot goes in 1
   ModifiableController pilot = ModifiableController(0);
@@ -266,7 +270,9 @@ int shootStablizer=0;
   
   // int auton_Wait = 0; 
 
-  // bool auton_isWaiting = false;
+  //this is a countdown to estimate the time unitl climber is fully extended it counts down 50 every second
+  int climberCountdown = 200;
+
 
   bool newAutonCall = true;
 
