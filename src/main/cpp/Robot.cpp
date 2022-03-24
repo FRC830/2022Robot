@@ -356,6 +356,7 @@ void Robot::HandleClimber(){
   if (copilot.GetLeftY("OG") > 0.5 && climberCountdown >0 )
   {
     climber.Set(-0.3);
+    climberCountdown--;
   }
   else if (copilot.GetLeftY("OG") < -0.5)
   {
