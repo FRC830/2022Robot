@@ -14,7 +14,13 @@ void Robot::HandleDrivetrain() {
 
 
   //new, more advanced input sensitivity. Revert to old version if this does not work.
-  pilot.setSensitivityLevel(defaultInputSensitivity + (((pilot.GetRightTriggerAxis("noS") < 0.9) ? pilot.GetRightTriggerAxis("noS") : 1)  * (1 - defaultInputSensitivity)));
+  if (pilot.GetLeftBumper())
+  {
+    pilot.setSensitivityLevel(0.1);
+  }
+  else{
+    pilot.setSensitivityLevel(defaultInputSensitivity + (((pilot.GetRightTriggerAxis("noS") < 0.9) ? pilot.GetRightTriggerAxis("noS") : 1)  * (1 - defaultInputSensitivity)));
+  }
 
 
   //inputSentivityReduction = false;
