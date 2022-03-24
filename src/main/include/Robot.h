@@ -157,6 +157,7 @@ class Robot : public frc::TimedRobot {
     9 - ?? 3 ball auton
   */
   rev::CANSparkMax climber = rev::CANSparkMax(5, rev::CANSparkMaxLowLevel::MotorType::kBrushless); 
+  rev::CANSparkMax climber2 = rev::CANSparkMax(6, rev::CANSparkMaxLowLevel::MotorType::kBrushless);
 
   int autonMode;
 

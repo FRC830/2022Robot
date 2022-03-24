@@ -32,6 +32,7 @@ void Robot::RobotInit() {
   autonChooser.AddOption(twoBallLineMiddleAuton, twoBallLineMiddleAuton);
   autonChooser.AddOption(mysteryMode, mysteryMode);
 
+  climber2.Follow(climber, true);
 }
 
 void Robot::RobotPeriodic() {}
