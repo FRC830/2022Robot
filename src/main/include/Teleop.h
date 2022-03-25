@@ -24,9 +24,11 @@ void Robot::HandleDrivetrain() {
   if (sneak)
   {
     pilot.setSensitivityLevel(0.1);
+    turningSensitivity = 1.35;
   }
   else{
     pilot.setSensitivityLevel(defaultInputSensitivity + (((pilot.GetRightTriggerAxis("noS") < 0.9) ? pilot.GetRightTriggerAxis("noS") : 1)  * (1 - defaultInputSensitivity)));
+    turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.91);
   }
 
 
@@ -120,6 +122,30 @@ bool Robot::CalculateShot()
   
 }
 
+
+void Robot::HandleClimber(){
+  if (copilot.GetLeftY("OG") > 0.5 && climberCountdown >0 )
+  {
+    climber.Set(-0.3);
+    climberCountdown--;
+  }
+  else if (copilot.GetLeftY("OG") < -0.5)
+  {
+    climber.Set(-0.3);
+  } 
+  else if (copilot.GetStartButton())
+  {
+    ////////////////////////scary/reverse////////////////////////////////
+    ////////////DONT PRESS THIS UNLESS THE WHINCH IS DISABLED////////////
+    /////////////////////////////////////////////////////////////////////
+    climber.Set(0.3);
+  } 
+  else{
+    climber.Set(0.0);
+  }
+}
+
+
 void Robot::HandleShooter(){
   //Apply Ryan's confusing Deadzone math:
   //The following line serves as a deadzone maximum ex: 0.7- (0.7-0.6)
@@ -187,13 +213,6 @@ void Robot::HandleShooter(){
 }
 
 void Robot::HandleBallManagement(){
-  std::cout << std::to_string(shootStablizer) << std::endl; 
-  shootStablizer--;
-
-  // leftVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-  // middleVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-  // rightVictor.SetInverted(true);
-  // rightVictor.Set(VictorSPXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
 
   // ballManageOutput = (copilot.GetAButton() && abs(leftFlywheelTalon.GetClosedLoopError() < 145)) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
   ballManageOutput = (copilot.GetXButton() || (copilot.GetAButton() && (leftFlywheelTalon.GetClosedLoopError() < 100))) ? frc::SmartDashboard::GetNumber("Ball Management Maximum", 0.5) : 0;
@@ -206,6 +225,7 @@ void Robot::HandleBallManagement(){
 
   if (ballManageOutput > 0)
   {
+    std::cout << "ball management" << std::endl;
     leftVictor.Set(VictorSPXControlMode::PercentOutput, ballManageOutput);
     middleVictor.Set(VictorSPXControlMode::PercentOutput, -ballManageOutput);
     rightVictor.SetInverted(true);

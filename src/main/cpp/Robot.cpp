@@ -79,6 +79,8 @@ void Robot::AutonomousInit() {
   middleVictor.Set(VictorSPXControlMode::PercentOutput, -0);
   rightVictor.SetInverted(true);
   rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+
+  climber.Set(0);
   
 }
 
@@ -214,18 +216,15 @@ else if (currentAutonMode == twoBallMiddleAuton){
 }
 
 else if (currentAutonMode == twoBallRightAuton){
-  if (autonStep > 10)
-  {
-    runIntake(0.5);
-  }
+  runIntake(0.5);
 
   switch(autonStep)
   {
     case 1:
-      LinearMove(-80.75, 0.55);
+      LinearMove(-68, 0.45);
       break;
-     case 3:
-      AccelerateFlywheelDuringAuton(4500, 4.0);
+    case 3:
+      AccelerateFlywheelDuringAuton(4275, 4.0);
       break;
     case 100:
       RunBallManagement(0.5);
@@ -329,6 +328,8 @@ void Robot::TeleopInit() {
   motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   }
+
+  climber.Set(0);
 }
 
 void Robot::TeleopPeriodic() {
@@ -352,28 +353,6 @@ void Robot::TeleopPeriodic() {
   HandleClimber();
 }
 
-void Robot::HandleClimber(){
-  if (copilot.GetLeftY("OG") > 0.5 && climberCountdown >0 )
-  {
-    climber.Set(-0.3);
-    climberCountdown--;
-  }
-  else if (copilot.GetLeftY("OG") < -0.5)
-  {
-    climber.Set(-0.3);
-  } 
-  else if (copilot.GetStartButton())
-  {
-    ////////////////////////scary/reverse////////////////////////////////
-    ////////////DONT PRESS THIS UNLESS THE WHINCH IS DISABLED////////////
-    /////////////////////////////////////////////////////////////////////
-    climber.Set(0.3);
-  } 
-  else{
-    climber.Set(0.0);
-  }
-}
-
 void Robot::DisabledInit() {
   firstCallToAuton = true;
   firstCallToAuton = true;
@@ -385,6 +364,8 @@ void Robot::DisabledInit() {
   motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
   motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
   motorFL.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+
+  climber.Set(0);
 }
 
 void Robot::DisabledPeriodic() {}
