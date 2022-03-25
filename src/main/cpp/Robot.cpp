@@ -165,7 +165,7 @@ void Robot::AutonomousPeriodic() {
 
 
   else if (currentAutonMode == twoBallLeftAuton){
-  runIntake(0.9);
+  runIntake(0.5);
 
   switch(autonStep)
   {
