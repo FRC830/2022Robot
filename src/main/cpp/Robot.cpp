@@ -377,58 +377,58 @@ void Robot::TestPeriodic() {}
 void Robot::PlaceShuffleboardTiles()
 {
   //Initially place values to Shuffleboard
-  frc::SmartDashboard::PutBoolean("Arcade Drive", true);
-  frc::SmartDashboard::PutNumber("Tank Assist", 0.05);
-  frc::SmartDashboard::PutNumber("Input Sensitivity", 0.4);
-  frc::SmartDashboard::PutNumber("Turning Sensitivity", 0.91);
-  frc::SmartDashboard::PutNumber("Deadzone Size", 0.05);
-  frc::SmartDashboard::PutNumber("Auton Mode", 2);
-  frc::SmartDashboard::PutBoolean("Invert Robot", false);
+  // frc::SmartDashboard::PutBoolean("Arcade Drive", true);
+  // frc::SmartDashboard::PutNumber("Tank Assist", 0.05);
+  // frc::SmartDashboard::PutNumber("Input Sensitivity", 0.4);
+  // frc::SmartDashboard::PutNumber("Turning Sensitivity", 0.91);
+  // frc::SmartDashboard::PutNumber("Deadzone Size", 0.05);
+  // frc::SmartDashboard::PutNumber("Auton Mode", 2);
+  // frc::SmartDashboard::PutBoolean("Invert Robot", false);
 
-  frc::SmartDashboard::PutBoolean("Ebrake", true);
+  // frc::SmartDashboard::PutBoolean("Ebrake", true);
   
-  //frc::SmartDashboard::PutNumber("GearRatio", gearRatio);
+  // //frc::SmartDashboard::PutNumber("GearRatio", gearRatio);
   
-  frc::SmartDashboard::PutNumber("Shooter Maximum", 4000);
-  frc::SmartDashboard::PutNumber("Shooter HANGER", 100);
-  frc::SmartDashboard::PutNumber("Shooter Output", 0);
-  frc::SmartDashboard::PutNumber("ratio backspin to flywheel",4);
-  frc::SmartDashboard::PutNumber("Ball Management Output", 0);
-  frc::SmartDashboard::PutNumber("Ball Management Maximum", 0.5);  
-  frc::SmartDashboard::PutNumber("Intake Maximum", 0.5);
-  frc::SmartDashboard::PutNumber("Intake Output", 0);
-  frc::SmartDashboard::PutBoolean("Intake Extended", false);
-  frc::SmartDashboard::PutBoolean("GET Y BUTTON", false);
+  // frc::SmartDashboard::PutNumber("Shooter Maximum", 4000);
+  // frc::SmartDashboard::PutNumber("Shooter HANGER", 100);
+  // frc::SmartDashboard::PutNumber("Shooter Output", 0);
+  // frc::SmartDashboard::PutNumber("ratio backspin to flywheel",4);
+  // frc::SmartDashboard::PutNumber("Ball Management Output", 0);
+  // frc::SmartDashboard::PutNumber("Ball Management Maximum", 0.5);  
+  // frc::SmartDashboard::PutNumber("Intake Maximum", 0.5);
+  // frc::SmartDashboard::PutNumber("Intake Output", 0);
+  // frc::SmartDashboard::PutBoolean("Intake Extended", false);
+  // frc::SmartDashboard::PutBoolean("GET Y BUTTON", false);
 
   frc::SmartDashboard::PutData("Auton Modes", &autonChooser);
 }
 
 void Robot::GetTeleopShuffleBoardValues()
 {
-  //Collect values from Shuffleboard
-  arcadeDrive = frc::SmartDashboard::GetBoolean("Arcade Drive", true);
-  tankAssist = frc::SmartDashboard::GetNumber("Tank Assist", 0.08);
-  defaultInputSensitivity = frc::SmartDashboard::GetNumber("Input Sensitivity", 0.4);
-  turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.91);
-  deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
+  // //Collect values from Shuffleboard
+  // arcadeDrive = frc::SmartDashboard::GetBoolean("Arcade Drive", true);
+  // tankAssist = frc::SmartDashboard::GetNumber("Tank Assist", 0.08);
+  // defaultInputSensitivity = frc::SmartDashboard::GetNumber("Input Sensitivity", 0.4);
+  // turningSensitivity = frc::SmartDashboard::GetNumber("Turning Sensitivity", 0.91);
+  // deadzoneLimit = frc::SmartDashboard::GetNumber("Deadzone Size", 0.05);
 
-  ebrake = frc::SmartDashboard::GetNumber("Ebrake", true);
+  // ebrake = frc::SmartDashboard::GetNumber("Ebrake", true);
 
   shooterMaximum = frc::SmartDashboard::GetNumber("Shooter Maximum", 4000);
-  shooterHANGER = frc::SmartDashboard::GetNumber("Shooter HANGER MAX", 100);
-  shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
-  ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
-  shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum",0.5);
-  intakeOutput = frc::SmartDashboard::GetNumber("Intake Output", 0);
-  intakeMaximum = frc::SmartDashboard::GetNumber("Intake Maximum", 0.9);
-  intakeExtended = frc::SmartDashboard::GetBoolean("Intake Extended", false);
+  // shooterHANGER = frc::SmartDashboard::GetNumber("Shooter HANGER MAX", 100);
+  // shooterOutput = frc::SmartDashboard::GetNumber("Shooter Output", 0);
+  // ballManageOutput = frc::SmartDashboard::GetNumber("Ball Management Output", 0);
+  // shooterOutput = frc::SmartDashboard::GetNumber("Ball Management Maximum",0.5);
+  // intakeOutput = frc::SmartDashboard::GetNumber("Intake Output", 0);
+  // intakeMaximum = frc::SmartDashboard::GetNumber("Intake Maximum", 0.9);
+  // intakeExtended = frc::SmartDashboard::GetBoolean("Intake Extended", false);
   //longSHOTHANGER = frc::SmartDashboard::GetBoolean("GET Y BUTTON", false);
 }
 
 void Robot::GetRobotShuffleoardValues()
 {
-  invertRobot = frc::SmartDashboard::GetBoolean("Invert Robot", false);
-  frc::SmartDashboard::PutNumber("aim tolerance", 40);
+  //invertRobot = frc::SmartDashboard::GetBoolean("Invert Robot", false);
+  //frc::SmartDashboard::PutNumber("aim tolerance", 40);
   //gearRatio = frc::SmartDashboard::GetNumber("GearRatio", gearRatio);
 }
 
