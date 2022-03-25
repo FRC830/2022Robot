@@ -299,5 +299,7 @@ int shootStablizer=0;
   double correctSpeed;
   double correctRatio;
 
+  bool sneak = false;
+
 
 };

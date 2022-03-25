@@ -14,7 +14,14 @@ void Robot::HandleDrivetrain() {
 
 
   //new, more advanced input sensitivity. Revert to old version if this does not work.
-  if (pilot.GetLeftBumper())
+
+  if (pilot.GetXButtonPressed() || pilot.GetBButtonPressed())
+  {
+    sneak = !sneak;
+  }
+
+
+  if (sneak)
   {
     pilot.setSensitivityLevel(0.1);
   }
