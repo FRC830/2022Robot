@@ -161,9 +161,9 @@ void Robot::HandleShooter(){
   //static shot (short)
   if (copilot.GetLeftTriggerAxis("noS") > 0.2)
   {
-    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, frc::SmartDashboard::GetNumber("Shooter Maximum", 4700));
+    leftFlywheelTalon.Set(TalonFXControlMode::Velocity, 4000);
     rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-    backSpinTalon.Set(TalonFXControlMode::Velocity, frc::SmartDashboard::GetNumber("Shooter Maximum", 4700) * frc::SmartDashboard::GetNumber("ratio backspin to flywheel", 1));
+    backSpinTalon.Set(TalonFXControlMode::Velocity, 4000 * 4);
     rightFlywheelTalon.SetInverted(true);
     backSpinTalon.SetInverted(true);
   }
