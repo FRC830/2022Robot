@@ -176,7 +176,7 @@ void Robot::AutonomousPeriodic() {
       AccelerateFlywheelDuringAuton(4500, 4.0);
       break;
     case 100:
-      RunBallManagement(0.5);
+      RunBallManagement(0.75);
       break;
     default:
       autonStep++;
@@ -196,7 +196,7 @@ else if (currentAutonMode == twoBallMiddleAuton){
       CenterPointTurn(135.0, 0.35);
       break;
     case 4:
-      runIntake(0.9);
+      runIntake(0.5);
     case 5:
       LinearMove(-50.0, 0.5);
       break;

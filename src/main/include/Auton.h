@@ -9,6 +9,12 @@ void Robot::runIntake(double speed)
   leftSolenoid.Set(true);
   rightSolenoid.Set(true);
   frc::SmartDashboard::PutBoolean("Intake Extended", true);
+
+  leftVictor.Set(VictorSPXControlMode::PercentOutput, speed);
+  rightVictor.SetInverted(true);
+  rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
+  autonStep++;
+  
 }
 
 void Robot::AccelerateFlywheelDuringAuton(int speed, double ratio)
