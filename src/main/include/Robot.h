@@ -277,10 +277,10 @@ int shootStablizer=0;
 
   bool newAutonCall = true;
 
-  double motorFLEncoderTarget;
-  double motorFREncoderTarget;
-  double motorBLEncoderTarget;
-  double motorBREncoderTarget;
+  double motorFLEncoderTarget = 0;
+  double motorFREncoderTarget = 0;
+  double motorBLEncoderTarget = 0;
+  double motorBREncoderTarget = 0;
   
   bool invertRobot;
 

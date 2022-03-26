@@ -13,7 +13,6 @@ void Robot::runIntake(double speed)
   leftVictor.Set(VictorSPXControlMode::PercentOutput, speed);
   rightVictor.SetInverted(true);
   rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
-  autonStep++;
   
 }
 
@@ -62,8 +61,10 @@ void Robot::LinearMove(double distance, double motorSpeed)
   //std::printf("in the function");
   direction = distance / abs(distance);
 
-  // std::cout << ((std::to_string(motorFLEncoder.GetPosition()) + std::to_string(motorFLEncoderTarget) +
-  //         std::to_string(motorFREncoder.GetPosition()) +std::to_string( motorFREncoderTarget) )) << std::endl;
+  //std::cout << "FR target: " << std::to_string (motorFREncoderTarget) << " FR Position: " << //::to_string (motorFREncoder.GetPosition()) << std::endl;
+  //std::cout << "FL target: " << std::to_string (motorFLEncoderTarget) << " FL Position: " << s//td::to_string (motorFLEncoder.GetPosition()) << std::endl;
+  //std::cout << "BL target: " << std::to_string (motorBLEncoderTarget) << " BL Position: " << std::to_string (motorBLEncoder.GetPosition()) << std::endl;
+  //std::cout << "BR target: " << std::to_string (motorBREncoderTarget) << " BR Position: " << std::to_string (motorBREncoder.GetPosition()) << std::endl;
 
   if ((motorFLEncoder.GetPosition() * direction < motorFLEncoderTarget * direction) && 
         (motorFREncoder.GetPosition() * direction < motorFREncoderTarget * direction))

@@ -15,8 +15,6 @@ void Robot::RobotInit() {
   GetRobotShuffleoardValues();
   motorGroupLeft.SetInverted(true);
 
-  frc::CameraServer::StartAutomaticCapture();
-
   // Initial Auton Modes
   autonChooser.SetDefaultOption(stayAuton, stayAuton);
   autonChooser.AddOption(stayAuton, stayAuton);
@@ -53,18 +51,25 @@ void Robot::AutonomousInit() {
   newAutonCall = true;
 
 
+  std::cout << "moter FL position Before" << std::to_string(motorFLEncoder.GetPosition()) << std::endl;
+  std::cout << "moter FR position Before" << std::to_string(motorFREncoder.GetPosition()) << std::endl;
+  std::cout << "moter BL position Before" << std::to_string(motorBLEncoder.GetPosition()) << std::endl;
+  std::cout << "moter BR position Before" << std::to_string(motorBREncoder.GetPosition()) << std::endl;
+
   motorFLEncoder.SetPosition(0.0);
   motorFREncoder.SetPosition(0.0);
   motorBLEncoder.SetPosition(0.0);
   motorBREncoder.SetPosition(0.0);
+  
+  std::cout << "moter FL position After" << std::to_string(motorFLEncoder.GetPosition()) << std::endl;
+  std::cout << "moter FR position After" << std::to_string(motorFREncoder.GetPosition()) << std::endl;
+  std::cout << "moter BL position AFter" << std::to_string(motorBLEncoder.GetPosition()) << std::endl;
+  std::cout << "moter BR position After" << std::to_string(motorBREncoder.GetPosition()) << std::endl;
 
-  if (motorBREncoder.SetPosition(0.0) == rev::REVLibError::kOk)
-  {
-    std::cout << std::endl << "BR Encoder successfully set to: " << motorBREncoder.GetPosition() << std::endl;
-  }
-  std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
-  std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
-  std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
+  motorFLEncoderTarget = 0;
+  motorFREncoderTarget = 0;
+  motorBLEncoderTarget = 0;
+  motorBREncoderTarget = 0;
 
   // look at suffleboard...
 
