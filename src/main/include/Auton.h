@@ -2,9 +2,11 @@
 
 void Robot::runIntake(double speed)
 {
-  intakeOutput = speed * intakeMaximum;
-  intakeMotor.Set(VictorSPXControlMode::PercentOutput, -0.9);
-  frc::SmartDashboard::PutNumber("Intake Output", 0.9);
+  std::cout << "run intake called "  << std::endl;
+
+  intakeOutput = speed;
+  intakeMotor.Set(VictorSPXControlMode::PercentOutput, -intakeOutput);
+  frc::SmartDashboard::PutNumber("Intake Output", intakeOutput);
 
   leftSolenoid.Set(true);
   rightSolenoid.Set(true);
@@ -41,6 +43,11 @@ void Robot::LinearMove(double distance, double motorSpeed)
 {
   assert (motorSpeed > 0);
   assert (distance != 0);
+  if (linearMoveCounter < 10)
+  {
+    linearMoveCounter++;
+    return;
+  }
 
   double encoderDistance = InchesToEncoderTicks(distance);
   if (newAutonCall)
@@ -81,6 +88,7 @@ void Robot::LinearMove(double distance, double motorSpeed)
     autonStep++;
     std::cout << "auton step after: " << std::to_string(autonStep) << std::endl;
     newAutonCall = true;
+    linearMoveCounter = 0;
     return;
   }
 

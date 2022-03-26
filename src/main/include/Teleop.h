@@ -259,12 +259,14 @@ void Robot::HandleIntake(){
  if (isIntaking){
     leftSolenoid.Set(true);
     rightSolenoid.Set(true);
-    frc::SmartDashboard::PutBoolean("Intake Extended", true);
+    leftVictor.Set(VictorSPXControlMode::PercentOutput, 0.5);
+    rightVictor.SetInverted(true);
+    rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
   }
   else{
     leftSolenoid.Set(false);
     rightSolenoid.Set(false);
-    frc::SmartDashboard::PutBoolean("Intake Extended", false);
+    //leftVictor.Set(VictorSPXControlMode::PercentOutput, 0);
   }
 }
 

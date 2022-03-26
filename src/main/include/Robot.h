@@ -301,5 +301,5 @@ int shootStablizer=0;
 
   bool sneak = false;
 
-
+  int linearMoveCounter = 0;
 };

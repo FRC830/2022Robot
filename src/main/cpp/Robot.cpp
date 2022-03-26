@@ -11,6 +11,9 @@
 using namespace std;
 
 void Robot::RobotInit() {
+  leftSolenoid.Set(true);
+  rightSolenoid.Set(true);
+
   PlaceShuffleboardTiles();
   GetRobotShuffleoardValues();
   motorGroupLeft.SetInverted(true);
@@ -39,6 +42,9 @@ void Robot::RobotPeriodic() {}
 
 void Robot::AutonomousInit() {
 
+  leftSolenoid.Set(true);
+  rightSolenoid.Set(true);
+
   motorFR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   motorBR.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   motorBL.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -49,6 +55,7 @@ void Robot::AutonomousInit() {
   autonMovingMotor = false;
   autonStep = 1;
   newAutonCall = true;
+  linearMoveCounter = 0;
 
 
   std::cout << "moter FL position Before" << std::to_string(motorFLEncoder.GetPosition()) << std::endl;
@@ -86,6 +93,8 @@ void Robot::AutonomousInit() {
   rightVictor.Set(VictorSPXControlMode::Follower, leftVictor.GetDeviceID());
 
   climber.Set(0);
+
+  
   
 }
 
@@ -101,7 +110,7 @@ void Robot::AutonomousPeriodic() {
   std::string currentAutonMode = autonChooser.GetSelected();
 
   if (currentAutonMode == stayAuton){
-    std::cout << "do nothing" << std::endl;
+    //std::cout << "do nothing" << std::endl;
   }
   else if (currentAutonMode == taxiAuton){
     switch (autonStep)
@@ -263,10 +272,8 @@ else if (currentAutonMode == twoBallLineLeftAuton){
 }
 
   else if (currentAutonMode == twoBallLineMiddleAuton){
-    if (autonStep >= 11)
-    {
-      runIntake(0.5);
-    }
+
+    runIntake(0.5);
     switch(autonStep)
     {
       case 1: 
@@ -293,10 +300,10 @@ else if (currentAutonMode == twoBallLineLeftAuton){
 
   else if (currentAutonMode == twoBallLineRightAuton)
   {
-    if (autonStep > 10)
-    {
-      runIntake(0.5);
-    }
+    // if (autonStep > 10)
+    // {
+    //   runIntake(0.5);
+    // }
     switch(autonStep)
     {
       case 1:
@@ -318,6 +325,10 @@ else if (currentAutonMode == twoBallLineLeftAuton){
 
 
 void Robot::TeleopInit() {
+
+  leftSolenoid.Set(true);
+  rightSolenoid.Set(true);
+
   GetTeleopShuffleBoardValues();
   pilot.setDeadzone();
   copilot.setDeadzone();
@@ -359,6 +370,9 @@ void Robot::TeleopPeriodic() {
 }
 
 void Robot::DisabledInit() {
+  leftSolenoid.Set(true);
+  rightSolenoid.Set(true);
+
   firstCallToAuton = true;
   firstCallToAuton = true;
   autonMovingMotor = false;
