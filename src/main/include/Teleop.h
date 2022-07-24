@@ -188,11 +188,11 @@ void Robot::HandleShooter(){
   }
   //vision shot
   else if (copilot.GetRightTriggerAxis("noS") > 0.2 && shotSuccess){
-  leftFlywheelTalon.Set(TalonFXControlMode::Velocity, correctSpeed);
-  rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
-  backSpinTalon.Set(TalonFXControlMode::Velocity, correctSpeed * correctRatio);
-  rightFlywheelTalon.SetInverted(true);
-  backSpinTalon.SetInverted(true);
+   leftFlywheelTalon.Set(TalonFXControlMode::Velocity, correctSpeed);
+    rightFlywheelTalon.Set(TalonFXControlMode::Follower, leftFlywheelTalon.GetDeviceID());
+   backSpinTalon.Set(TalonFXControlMode::Velocity, correctSpeed * correctRatio);
+   rightFlywheelTalon.SetInverted(true);
+   backSpinTalon.SetInverted(true);
 
   }
   //no shot
@@ -211,6 +211,7 @@ void Robot::HandleShooter(){
 
   //Change this to be much much much much slower!!
 }
+
 
 void Robot::HandleBallManagement(){
 

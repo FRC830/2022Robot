@@ -334,7 +334,7 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
   GetTeleopShuffleBoardValues();
-  autoAligning = pilot.GetAButton();
+  autoAligning = !pilot.GetAButton();
   if (autoAligning) {
     //KEEP THESE TWO SEPERATE IF STATEMENTS!!! VERY IMPROTANT!!!
     if (AimRobotAtHub(0.4)){
