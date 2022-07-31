@@ -39,7 +39,7 @@ void Robot::HandleDrivetrain() {
     double forwardSpeed = pilot.GetRightY();
     if (autoAligning)
     {
-      turningSpeed = 0;
+      turningSpeed = -AutoAlignTurningSpeed; 
     }
     drivetrain.ArcadeDrive(forwardSpeed, turningSpeed * -1, inputSentivityReduction);
   }
@@ -271,7 +271,8 @@ void Robot::HandleIntake(){
 
 bool Robot::AimRobotAtHub(double motorSpeed)
 {
-  //tab stands for table
+  // tab stands for table
+  AutoAlignTurningSpeed = 0;
   double distance = visionTab -> GetNumber("Hub Center X Distance", -2);
   std::cout << std::to_string(distance) << std::endl;
   if (distance == -1)
@@ -285,18 +286,23 @@ bool Robot::AimRobotAtHub(double motorSpeed)
   }
   
   double goal = frc::SmartDashboard::GetNumber("X resolution", 1080) / 2;
-  if (abs(distance - goal) > frc::SmartDashboard::GetNumber("aim tolerance", 25))
+  if (abs(distance - goal) < frc::SmartDashboard::GetNumber("aim tolerance", 25)) // I flipped the comparison operator here - Zachary Lin
   {
+    std::cout << "Aimed at Goal" << std::endl;
     autonStep++;
     return false;
   }
 
   if (distance > goal)
   {
+    AutoAlignTurningSpeed = motorSpeed;
+    std::cout << "Turning Left" << std::endl;
     drivetrain.ArcadeDrive(0, motorSpeed, false);
   }
   else 
   {
+    AutoAlignTurningSpeed = motorSpeed * -1;
+    std::cout << "Turning Right" << std::endl;
     drivetrain.ArcadeDrive(0, motorSpeed * -1, false);
   }
   return true;

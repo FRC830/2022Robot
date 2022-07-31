@@ -288,6 +288,7 @@ int shootStablizer=0;
   double rotationAxisRadius = 13;
 
   bool autoAligning = false; 
+  double AutoAlignTurningSpeed = 0;
   /*
   #4 Intake
   */
