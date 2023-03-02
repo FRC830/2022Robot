@@ -82,36 +82,13 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
-
-  if (firstCallToAuton)
-  {
-    firstCallToAuton = false;
-    return;
-  }
-
-  std::cout << "BR Encoder " << motorFLEncoder.GetPosition() << std::endl;
-  std::cout << "FL Encoder " << motorFLEncoder.GetPosition() << std::endl;
-  std::cout << "BL Encoder " << motorBLEncoder.GetPosition() << std::endl;
-  std::cout << "FR Encoder " << motorFREncoder.GetPosition() << std::endl;
-
-   switch(autonMode) {
-     case 1:
-       Taxi(); 
-       break;
-     case 2:
-       BackupAndShootAuton();
-       break; 
-     case 3:
-       TestAuton();
-       break; 
-     default:
-       Taxi(); 
-       break;
-  }
+       drivetrain.TankDrive(0.1, 0.1, false);
 }
 
 
 void Robot::TeleopInit() {
+
+  drivetrain.TankDrive(0, 0, false);
   
   GetTeleopShuffleBoardValues();
   pilot.setDeadzone();
@@ -230,7 +207,7 @@ void Robot::HandleShooter(){
   double ratio = frc::SmartDashboard::GetNumber("ratio backspin to flywheel",3.6);
 
 
-  longSHOTHANGER = copilot.GetYButton();
+  longSHOTHANGER = false;//copilot.GetYButton();
   frc::SmartDashboard::PutBoolean("GET Y BUTTON", longSHOTHANGER);
 
   //index is the index of the distance data point right above, -1 if its above everything
